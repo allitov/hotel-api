@@ -1,0 +1,14 @@
+version: '3'
+
+name: hotel-api-env
+
+services:
+  postgres:
+    container_name: postgres_container
+    image: postgres:16
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: hotel_api
