@@ -37,7 +37,6 @@ public class DatabaseHotelService implements HotelService {
      * @param id an ID by which to find the hotel.
      * @return a hotel found by ID.
      * @throws jakarta.persistence.EntityNotFoundException if the hotel entity with the specified ID was not found.
-     * @throws IllegalArgumentException if the specified ID is null.
      */
     @Override
     public Hotel findById(Integer id) {
@@ -51,7 +50,6 @@ public class DatabaseHotelService implements HotelService {
      * Creates a hotel entity from the specified hotel data and returns it.
      * @param hotel a hotel data to save.
      * @return a created hotel entity.
-     * @throws IllegalArgumentException if the specified hotel data is null.
      */
     @Override
     public Hotel create(Hotel hotel) {
@@ -64,7 +62,6 @@ public class DatabaseHotelService implements HotelService {
      * @param hotel a hotel to take data from.
      * @return an updated hotel entity.
      * @throws jakarta.persistence.EntityNotFoundException if the hotel entity with the specified ID was not found.
-     * @throws IllegalArgumentException if the specified ID or the hotel entity is null.
      */
     @Override
     public Hotel updateById(Integer id, Hotel hotel) {
@@ -78,7 +75,6 @@ public class DatabaseHotelService implements HotelService {
     /**
      * Deletes a hotel entity by the specified ID.
      * @param id an ID by which to delete the hotel entity.
-     * @throws IllegalArgumentException if the specified ID is null.
      */
     @Override
     public void deleteById(Integer id) {
