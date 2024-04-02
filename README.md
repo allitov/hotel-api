@@ -27,3 +27,8 @@ docker-compose --file ./docker/docker-compose-env.yaml up -d
 ```shell
 docker-compose --project-name="hotel-api-env" down
 ```
+
+## Documentation
+To familiarize yourself with the application's API and see example queries,
+you can refer to the [interactive Swagger documentation](http://localhost:8080/swagger-ui/index.html)
+(available only after launching the application).
