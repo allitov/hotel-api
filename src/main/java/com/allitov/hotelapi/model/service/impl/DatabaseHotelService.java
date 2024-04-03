@@ -53,6 +53,9 @@ public class DatabaseHotelService implements HotelService {
      */
     @Override
     public Hotel create(Hotel hotel) {
+        hotel.setRating(0F);
+        hotel.setNumberOfRatings(0);
+
         return hotelRepository.save(hotel);
     }
 

@@ -14,6 +14,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -24,6 +25,7 @@ import java.net.URI;
  * @author allitov
  * @version 1.0
  */
+@Slf4j
 @RestController
 @RequestMapping("/api/v1/hotel")
 @RequiredArgsConstructor
@@ -52,6 +54,8 @@ public class HotelController {
     })
     @GetMapping
     public ResponseEntity<HotelListResponse> findAll() {
+        log.info("Find all request");
+
         return ResponseEntity.ok(hotelMapper.entityListToListResponse(hotelService.findAll()));
     }
 
@@ -76,6 +80,8 @@ public class HotelController {
     })
     @GetMapping("/{id}")
     public ResponseEntity<HotelResponse> findById(@PathVariable("id") Integer id) {
+        log.info("Find by id request with id = '{}'", id);
+
         return ResponseEntity.ok(hotelMapper.entityToResponse(hotelService.findById(id)));
     }
 
@@ -95,6 +101,8 @@ public class HotelController {
     })
     @PostMapping
     public ResponseEntity<Void> create(@RequestBody HotelRequest request) {
+        log.info("Create request with body = '{}'", request);
+
         return ResponseEntity.created(
                 URI.create("/api/v1/hotel/" + hotelService.create(hotelMapper.requestToEntity(request)).getId())
         ).build();
@@ -115,6 +123,7 @@ public class HotelController {
     })
     @PutMapping("/{id}")
     public ResponseEntity<Void> updateById(@PathVariable("id") Integer id, @RequestBody HotelRequest request) {
+        log.info("Update by id request with id = '{}' and body = '{}'", id, request);
         hotelService.updateById(id, hotelMapper.requestToEntity(request));
 
         return ResponseEntity.noContent().build();
@@ -135,6 +144,7 @@ public class HotelController {
     })
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteById(@PathVariable("id") Integer id) {
+        log.info("Delete by id request with id = '{}'", id);
         hotelService.deleteById(id);
 
         return ResponseEntity.noContent().build();

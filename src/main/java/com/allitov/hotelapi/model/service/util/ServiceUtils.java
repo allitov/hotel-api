@@ -3,6 +3,7 @@ package com.allitov.hotelapi.model.service.util;
 import com.allitov.hotelapi.exception.CopyPropertiesException;
 import lombok.NonNull;
 import lombok.experimental.UtilityClass;
+import lombok.extern.slf4j.Slf4j;
 
 import java.lang.reflect.Field;
 
@@ -11,6 +12,7 @@ import java.lang.reflect.Field;
  * @author allitov
  * @version 1.0
  */
+@Slf4j
 @UtilityClass
 public class ServiceUtils {
 
@@ -36,6 +38,7 @@ public class ServiceUtils {
                 }
             }
         } catch (IllegalAccessException e) {
+            log.warn("Exception was thrown during copyNonNullProperties() method: {}", e.getMessage());
             throw new CopyPropertiesException(e.getMessage());
         }
     }
