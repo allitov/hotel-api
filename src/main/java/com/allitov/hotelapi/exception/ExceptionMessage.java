@@ -10,5 +10,5 @@ import lombok.experimental.UtilityClass;
 @UtilityClass
 public class ExceptionMessage {
 
-    public final String HOTEL_BY_ID_NOT_FOUND = "Hotel with id = \"{0}\" not found.";
+    public final String HOTEL_BY_ID_NOT_FOUND = "Hotel with id = ''{0}'' not found.";
 }
