@@ -2,6 +2,7 @@ package com.allitov.hotelapi.web.controller;
 
 import com.allitov.hotelapi.model.service.HotelService;
 import com.allitov.hotelapi.web.dto.request.HotelRequest;
+import com.allitov.hotelapi.web.dto.response.ErrorResponse;
 import com.allitov.hotelapi.web.dto.response.HotelListResponse;
 import com.allitov.hotelapi.web.dto.response.HotelResponse;
 import com.allitov.hotelapi.web.mapping.HotelMapper;
@@ -13,6 +14,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -76,6 +78,16 @@ public class HotelController {
                                     mediaType = "application/json"
                             )
                     }
+            ),
+            @ApiResponse(
+                    description = "Returns status 404 and error message if hotel with requested id was not found.",
+                    responseCode = "404",
+                    content = {
+                            @Content(
+                                    schema = @Schema(implementation = ErrorResponse.class),
+                                    mediaType = "application/json"
+                            )
+                    }
             )
     })
     @GetMapping("/{id}")
@@ -97,10 +109,20 @@ public class HotelController {
                     headers = {
                             @Header(name = "Location", description = "A created hotel location")
                     }
+            ),
+            @ApiResponse(
+                    description = "Returns status 400 and error message if request has invalid values.",
+                    responseCode = "400",
+                    content = {
+                            @Content(
+                                    schema = @Schema(implementation = ErrorResponse.class),
+                                    mediaType = "application/json"
+                            )
+                    }
             )
     })
     @PostMapping
-    public ResponseEntity<Void> create(@RequestBody HotelRequest request) {
+    public ResponseEntity<Void> create(@Valid @RequestBody HotelRequest request) {
         log.info("Create request with body = '{}'", request);
 
         return ResponseEntity.created(
@@ -119,10 +141,31 @@ public class HotelController {
             @ApiResponse(
                     description = "Returns status 204 if everything completed successfully.",
                     responseCode = "204"
+            ),
+            @ApiResponse(
+                    description = "Returns status 400 and error message if request has invalid values.",
+                    responseCode = "400",
+                    content = {
+                            @Content(
+                                    schema = @Schema(implementation = ErrorResponse.class),
+                                    mediaType = "application/json"
+                            )
+                    }
+            ),
+            @ApiResponse(
+                    description = "Returns status 404 and error message if hotel with requested id was not found.",
+                    responseCode = "404",
+                    content = {
+                            @Content(
+                                    schema = @Schema(implementation = ErrorResponse.class),
+                                    mediaType = "application/json"
+                            )
+                    }
             )
     })
     @PutMapping("/{id}")
-    public ResponseEntity<Void> updateById(@PathVariable("id") Integer id, @RequestBody HotelRequest request) {
+    public ResponseEntity<Void> updateById(@PathVariable("id") Integer id,
+                                           @Valid @RequestBody HotelRequest request) {
         log.info("Update by id request with id = '{}' and body = '{}'", id, request);
         hotelService.updateById(id, hotelMapper.requestToEntity(request));
 
