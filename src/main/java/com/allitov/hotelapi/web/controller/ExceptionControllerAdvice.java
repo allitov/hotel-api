@@ -19,7 +19,6 @@ import java.util.stream.Collectors;
 /**
  * The class that handles errors and creates a response.
  * @author allitov
- * @version 1.0
  */
 @Slf4j
 @RestControllerAdvice

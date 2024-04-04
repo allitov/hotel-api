@@ -8,7 +8,6 @@ import lombok.NoArgsConstructor;
 /**
  * The DTO response class for errors.
  * @author allitov
- * @version 1.0
  */
 @Data
 @NoArgsConstructor

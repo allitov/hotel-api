@@ -7,13 +7,12 @@ import java.util.List;
  * @param <T> a type of entity.
  * @param <ID> a type of entity ID.
  * @author allitov
- * @version 1.0
  */
 public interface CrudService<T, ID> {
 
     /**
-     * Returns a {@link java.util.List} of found entities.
-     * @return a {@link java.util.List} of found entities.
+     * Returns a list of found entities.
+     * @return a list of found entities.
      */
     List<T> findAll();
 

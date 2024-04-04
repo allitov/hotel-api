@@ -25,7 +25,6 @@ import java.net.URI;
 /**
  * The controller class for the hotel entity.
  * @author allitov
- * @version 1.0
  */
 @Slf4j
 @RestController

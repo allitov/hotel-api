@@ -9,7 +9,6 @@ import lombok.NoArgsConstructor;
 /**
  * The DTO response class for the hotel entity.
  * @author allitov
- * @version 1.0
  */
 @Data
 @Builder

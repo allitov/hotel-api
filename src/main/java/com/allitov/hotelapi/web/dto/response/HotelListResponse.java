@@ -10,7 +10,6 @@ import java.util.List;
 /**
  * The DTO list response class for the hotel entity.
  * @author allitov
- * @version 1.0
  */
 @Data
 @NoArgsConstructor

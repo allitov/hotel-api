@@ -12,7 +12,6 @@ import java.util.List;
 /**
  * The mapping class for the hotel entity.
  * @author allitov
- * @version 1.0
  */
 @Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.IGNORE)
 public interface HotelMapper {

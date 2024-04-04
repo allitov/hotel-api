@@ -10,7 +10,6 @@ import java.lang.reflect.Field;
 /**
  * The utility class that provides different helper methods for services.
  * @author allitov
- * @version 1.0
  */
 @Slf4j
 @UtilityClass

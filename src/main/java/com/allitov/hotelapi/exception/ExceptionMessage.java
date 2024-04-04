@@ -5,7 +5,6 @@ import lombok.experimental.UtilityClass;
 /**
  * The utility class that contains string constants with exception messages.
  * @author allitov
- * @version 1.0
  */
 @UtilityClass
 public class ExceptionMessage {
