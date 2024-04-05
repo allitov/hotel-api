@@ -6,7 +6,6 @@ import lombok.*;
 /**
  * The class that represents an entity of a hotel.
  * @author allitov
- * @version 1.0
  */
 @Data
 @Builder

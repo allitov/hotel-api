@@ -15,7 +15,6 @@ import java.util.List;
 /**
  * The {@link HotelService} implementation to work with a hotel entity in database.
  * @author allitov
- * @version 1.0
  */
 @Service
 @RequiredArgsConstructor
@@ -24,8 +23,8 @@ public class DatabaseHotelService implements HotelService {
     private final HotelRepository hotelRepository;
 
     /**
-     * Returns a {@link java.util.List} of found hotels.
-     * @return a {@link java.util.List} of found hotels.
+     * Returns a list of found hotels.
+     * @return a list of found hotels.
      */
     @Override
     public List<Hotel> findAll() {

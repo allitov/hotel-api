@@ -7,8 +7,13 @@ import com.allitov.hotelapi.web.dto.response.HotelListResponse;
 import com.allitov.hotelapi.web.dto.response.HotelResponse;
 import com.allitov.hotelapi.web.mapping.HotelMapper;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import jakarta.persistence.EntityNotFoundException;
+import net.bytebuddy.utility.RandomString;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -18,12 +23,15 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Stream;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WebMvcTest(value = HotelController.class)
 public class HotelControllerTest {
+
+    private final String baseUrl = "/api/v1/hotel";
 
     @Autowired
     private MockMvc mockMvc;
@@ -37,6 +45,8 @@ public class HotelControllerTest {
     @MockBean
     private HotelMapper hotelMapper;
 
+    // methods tests
+
     @Test
     @DisplayName("Test findAll() status 200")
     public void givenVoid_whenFindAll_thenHotelListResponse() throws Exception {
@@ -46,7 +56,7 @@ public class HotelControllerTest {
         Mockito.when(hotelMapper.entityListToListResponse(foundHotels))
                 .thenReturn(new HotelListResponse());
 
-        mockMvc.perform(get("/api/v1/hotel"))
+        mockMvc.perform(get(baseUrl))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(content().json("{'hotels': []}"));
@@ -68,7 +78,7 @@ public class HotelControllerTest {
         Mockito.when(hotelMapper.entityToResponse(foundHotel))
                 .thenReturn(response);
 
-        mockMvc.perform(get("/api/v1/hotel/{id}", id))
+        mockMvc.perform(get(baseUrl + "/{id}", id))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(content().json("{'id': 1, " +
@@ -87,6 +97,22 @@ public class HotelControllerTest {
     }
 
     @Test
+    @DisplayName("Test findById() status 404")
+    public void givenNonexistentId_whenFindById_thenErrorResponse() throws Exception {
+        Integer id = 10;
+        Mockito.when(hotelService.findById(id))
+                .thenThrow(new EntityNotFoundException("Entity not found."));
+
+        mockMvc.perform(get(baseUrl + "/{id}", id))
+                .andExpect(status().isNotFound())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(content().json("{'errorMessage': 'Entity not found.'}"));
+
+        Mockito.verify(hotelService, Mockito.times(1))
+                .findById(id);
+    }
+
+    @Test
     @DisplayName("Test create() status 201")
     public void givenHotelRequest_whenCreate_thenVoid() throws Exception {
         HotelRequest request = createHotelRequest();
@@ -98,7 +124,7 @@ public class HotelControllerTest {
         Mockito.when(hotelService.create(hotelFromRequest))
                 .thenReturn(hotelFromRequest);
 
-        mockMvc.perform(post("/api/v1/hotel")
+        mockMvc.perform(post(baseUrl)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isCreated())
@@ -108,6 +134,20 @@ public class HotelControllerTest {
                 .requestToEntity(request);
         Mockito.verify(hotelService, Mockito.times(1))
                 .create(hotelFromRequest);
+    }
+
+    @Test
+    @DisplayName("Test create() status 400")
+    public void givenInvalidHotelRequest_whenCreate_thenErrorResponse() throws Exception {
+        HotelRequest request = createHotelRequest();
+        request.setName(null);
+
+        mockMvc.perform(post(baseUrl)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(request)))
+                .andExpect(status().isBadRequest())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(content().json("{'errorMessage': 'Name must be specified.'}"));
     }
 
     @Test
@@ -121,10 +161,49 @@ public class HotelControllerTest {
         Mockito.when(hotelService.updateById(id, hotel))
                 .thenReturn(hotel);
 
-        mockMvc.perform(put("/api/v1/hotel/{id}", id)
+        mockMvc.perform(put(baseUrl + "/{id}", id)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isNoContent());
+
+        Mockito.verify(hotelMapper, Mockito.times(1))
+                .requestToEntity(request);
+        Mockito.verify(hotelService, Mockito.times(1))
+                .updateById(id, hotel);
+    }
+
+    @Test
+    @DisplayName("Test updateById() status 400")
+    public void givenIdAndInvalidHotelRequest_whenUpdateById_thenErrorResponse() throws Exception {
+        Integer id = 1;
+        HotelRequest request = createHotelRequest();
+        request.setName(null);
+
+        mockMvc.perform(put(baseUrl + "/{id}", id)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(request)))
+                .andExpect(status().isBadRequest())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(content().json("{'errorMessage': 'Name must be specified.'}"));
+    }
+
+    @Test
+    @DisplayName("Test updateById() status 404")
+    public void givenNonexistentIdAndHotelRequest_whenUpdateById_thenErrorResponse() throws Exception {
+        Integer id = 10;
+        HotelRequest request = createHotelRequest();
+        Hotel hotel = new Hotel();
+        Mockito.when(hotelMapper.requestToEntity(request))
+                .thenReturn(hotel);
+        Mockito.when(hotelService.updateById(id, hotel))
+                .thenThrow(new EntityNotFoundException("Entity not found."));
+
+        mockMvc.perform(put(baseUrl + "/{id}", id)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(request)))
+                .andExpect(status().isNotFound())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(content().json("{'errorMessage': 'Entity not found.'}"));
 
         Mockito.verify(hotelMapper, Mockito.times(1))
                 .requestToEntity(request);
@@ -137,11 +216,147 @@ public class HotelControllerTest {
     public void givenId_whenDeleteById_thenVoid() throws Exception {
         Integer id = 1;
 
-        mockMvc.perform(delete("/api/v1/hotel/{id}", id))
+        mockMvc.perform(delete(baseUrl + "/{id}", id))
                 .andExpect(status().isNoContent());
 
         Mockito.verify(hotelService, Mockito.times(1))
                 .deleteById(id);
+    }
+
+    // validation tests
+
+    @ParameterizedTest
+    @MethodSource("createBlankStrings")
+    @DisplayName("Test HotelRequest validation with blank name")
+    public void givenBlankHotelRequestName_whenCreate_thenErrorResponse(String name) throws Exception {
+        HotelRequest request = createHotelRequest();
+        request.setName(name);
+
+        mockMvc.perform(post(baseUrl)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(request)))
+                .andExpect(status().isBadRequest())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(content().json("{'errorMessage': 'Name must be specified.'}"));
+    }
+
+    @ParameterizedTest
+    @MethodSource("createInvalidStrings")
+    @DisplayName("Test HotelRequest validation with invalid name")
+    public void givenInvalidHotelRequestName_whenCreate_thenErrorResponse(String name) throws Exception {
+        HotelRequest request = createHotelRequest();
+        request.setName(name);
+
+        mockMvc.perform(post(baseUrl)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(request)))
+                .andExpect(status().isBadRequest())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(content().json("{'errorMessage': 'Name length must be <= 50.'}"));
+    }
+
+    @ParameterizedTest
+    @MethodSource("createBlankStrings")
+    @DisplayName("Test HotelRequest validation with blank description")
+    public void givenBlankHotelRequestDescription_whenCreate_thenErrorResponse(String description) throws Exception {
+        HotelRequest request = createHotelRequest();
+        request.setDescription(description);
+
+        mockMvc.perform(post(baseUrl)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(request)))
+                .andExpect(status().isBadRequest())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(content().json("{'errorMessage': 'Description must be specified.'}"));
+    }
+
+    @ParameterizedTest
+    @MethodSource("createInvalidStrings")
+    @DisplayName("Test HotelRequest validation with invalid description")
+    public void givenInvalidHotelRequestDescription_whenCreate_thenErrorResponse(String description) throws Exception {
+        HotelRequest request = createHotelRequest();
+        request.setDescription(description);
+
+        mockMvc.perform(post(baseUrl)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(request)))
+                .andExpect(status().isBadRequest())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(content().json("{'errorMessage': 'Description length must be <= 255.'}"));
+    }
+
+    @ParameterizedTest
+    @MethodSource("createBlankStrings")
+    @DisplayName("Test HotelRequest validation with blank city")
+    public void givenBlankHotelRequestCity_whenCreate_thenErrorResponse(String city) throws Exception {
+        HotelRequest request = createHotelRequest();
+        request.setCity(city);
+
+        mockMvc.perform(post(baseUrl)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(request)))
+                .andExpect(status().isBadRequest())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(content().json("{'errorMessage': 'City must be specified.'}"));
+    }
+
+    @ParameterizedTest
+    @MethodSource("createInvalidStrings")
+    @DisplayName("Test HotelRequest validation with invalid city")
+    public void givenInvalidHotelRequestCity_whenCreate_thenErrorResponse(String city) throws Exception {
+        HotelRequest request = createHotelRequest();
+        request.setCity(city);
+
+        mockMvc.perform(post(baseUrl)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(request)))
+                .andExpect(status().isBadRequest())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(content().json("{'errorMessage': 'City length must be <= 255.'}"));
+    }
+
+    @ParameterizedTest
+    @MethodSource("createBlankStrings")
+    @DisplayName("Test HotelRequest validation with blank address")
+    public void givenBlankHotelRequestAddress_whenCreate_thenErrorResponse(String address) throws Exception {
+        HotelRequest request = createHotelRequest();
+        request.setAddress(address);
+
+        mockMvc.perform(post(baseUrl)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(request)))
+                .andExpect(status().isBadRequest())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(content().json("{'errorMessage': 'Address must be specified.'}"));
+    }
+
+    @ParameterizedTest
+    @MethodSource("createInvalidStrings")
+    @DisplayName("Test HotelRequest validation with invalid address")
+    public void givenInvalidHotelRequestAddress_whenCreate_thenErrorResponse(String address) throws Exception {
+        HotelRequest request = createHotelRequest();
+        request.setAddress(address);
+
+        mockMvc.perform(post(baseUrl)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(request)))
+                .andExpect(status().isBadRequest())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(content().json("{'errorMessage': 'Address length must be <= 255.'}"));
+    }
+
+    @Test
+    @DisplayName("Test HotelRequest validation with null distance from center")
+    public void givenNullHotelRequestDistanceFromCenter_whenCreate_thenErrorResponse() throws Exception {
+        HotelRequest request = createHotelRequest();
+        request.setDistanceFromCenter(null);
+
+        mockMvc.perform(post(baseUrl)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(request)))
+                .andExpect(status().isBadRequest())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(content().json("{'errorMessage': 'Distance from center must be specified.'}"));
     }
 
     private HotelResponse creteHotelResponse() {
@@ -165,5 +380,19 @@ public class HotelControllerTest {
                 .address("address")
                 .distanceFromCenter(1.5F)
                 .build();
+    }
+
+    private static Stream<Arguments> createBlankStrings() {
+        return Stream.of(
+                Arguments.of((Object) null),
+                Arguments.of("     "),
+                Arguments.of(" \n\n\n  ")
+        );
+    }
+
+    private static Stream<Arguments> createInvalidStrings() {
+        return Stream.of(
+                Arguments.of(RandomString.make(256))
+        );
     }
 }
