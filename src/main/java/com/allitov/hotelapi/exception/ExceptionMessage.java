@@ -28,4 +28,6 @@ public class ExceptionMessage {
     public final String HOTEL_INVALID_ADDRESS_LENGTH = "Address length must be <= {max}.";
 
     public final String HOTEL_BLANK_DISTANCE_FROM_CENTER = "Distance from center must be specified.";
+
+    public final String ROOM_BY_ID_NOT_FOUND = "Room with id = ''{0}'' not found.";
 }
