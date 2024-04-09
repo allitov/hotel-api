@@ -92,7 +92,8 @@ public class DatabaseHotelServiceTest {
 
         Hotel createdHotel = hotelService.create(hotel);
 
-        assertEquals(hotel, createdHotel);
+        assertEquals(0F, createdHotel.getRating());
+        assertEquals(0, createdHotel.getNumberOfRatings());
         Mockito.verify(hotelRepository, Mockito.times(1))
                 .save(hotel);
     }
