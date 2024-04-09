@@ -1,13 +1,9 @@
 package com.allitov.hotelapi.model.entity;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.math.BigDecimal;
-import java.time.LocalDate;
 import java.util.List;
 
 /**
@@ -39,14 +35,12 @@ public class Room {
     @Column(name = "max_people")
     private Short maxPeople;
 
-    @ElementCollection(fetch = FetchType.EAGER)
-    @CollectionTable(
-            name = "unavailable_dates",
-            joinColumns = @JoinColumn(name = "room_id", referencedColumnName = "id")
-    )
-    private List<LocalDate> unavailableDates;
+    @OneToMany(fetch = FetchType.LAZY)
+    @EqualsAndHashCode.Exclude
+    private List<UnavailableDates> unavailableDates;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "hotel_id", referencedColumnName = "id")
+    @EqualsAndHashCode.Exclude
     private Hotel hotel;
 }
