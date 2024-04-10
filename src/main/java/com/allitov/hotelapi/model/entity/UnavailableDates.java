@@ -1,10 +1,7 @@
 package com.allitov.hotelapi.model.entity;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.time.LocalDate;
 
@@ -23,6 +20,7 @@ public class UnavailableDates {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
+    @EqualsAndHashCode.Exclude
     private Integer id;
 
     @ManyToOne(fetch = FetchType.EAGER)
