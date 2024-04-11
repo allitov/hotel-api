@@ -1,23 +1,24 @@
 package com.allitov.hotelapi.web.mapping.decorator;
 
+import com.allitov.hotelapi.model.entity.Hotel;
 import com.allitov.hotelapi.model.entity.Room;
-import com.allitov.hotelapi.model.service.HotelService;
 import com.allitov.hotelapi.web.dto.request.RoomRequest;
 import com.allitov.hotelapi.web.dto.response.RoomResponse;
 import com.allitov.hotelapi.web.mapping.RoomMapper;
+import lombok.Setter;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 
 /**
  * The decorator for the room mapper.
  * @author allitov
  */
+@Setter
 public abstract class RoomMapperDecorator implements RoomMapper {
 
     @Autowired
+    @Qualifier("delegate")
     protected RoomMapper delegate;
-
-    @Autowired
-    private HotelService hotelService;
 
     /**
      * Creates a room entity from a room request DTO and returns it.
@@ -27,7 +28,7 @@ public abstract class RoomMapperDecorator implements RoomMapper {
     @Override
     public Room requestToEntity(RoomRequest request) {
         Room room = delegate.requestToEntity(request);
-        room.setHotel(hotelService.findById(request.getHotelId()));
+        room.setHotel(Hotel.builder().id(request.getHotelId()).build());
 
         return room;
     }
@@ -39,6 +40,9 @@ public abstract class RoomMapperDecorator implements RoomMapper {
      */
     @Override
     public RoomResponse entityToResponse(Room room) {
-        return delegate.entityToResponse(room);
+        RoomResponse response = delegate.entityToResponse(room);
+        response.setHotelId(room.getHotel().getId());
+
+        return response;
     }
 }
