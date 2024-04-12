@@ -89,8 +89,8 @@ public class RoomController {
                     }
             )
     })
-    @GetMapping("/id")
-    public ResponseEntity<RoomResponse> findById(@RequestParam("id") Integer id) {
+    @GetMapping("/{id}")
+    public ResponseEntity<RoomResponse> findById(@PathVariable("id") Integer id) {
         log.info("Find by id request with id = '{}'", id);
 
         return ResponseEntity.ok(roomMapper.entityToResponse(roomService.findById(id)));
