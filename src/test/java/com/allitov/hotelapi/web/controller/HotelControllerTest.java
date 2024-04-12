@@ -31,7 +31,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @WebMvcTest(value = HotelController.class)
 public class HotelControllerTest {
 
-    private final String baseUrl = "/api/v1/hotel";
+    private final String baseUri = "/api/v1/hotel";
 
     @Autowired
     private MockMvc mockMvc;
@@ -56,7 +56,7 @@ public class HotelControllerTest {
         Mockito.when(hotelMapper.entityListToListResponse(foundHotels))
                 .thenReturn(new HotelListResponse());
 
-        mockMvc.perform(get(baseUrl))
+        mockMvc.perform(get(baseUri))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(content().json("{'hotels': []}"));
@@ -78,7 +78,7 @@ public class HotelControllerTest {
         Mockito.when(hotelMapper.entityToResponse(foundHotel))
                 .thenReturn(response);
 
-        mockMvc.perform(get(baseUrl + "/{id}", id))
+        mockMvc.perform(get(baseUri + "/{id}", id))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(content().json("{'id': 1, " +
@@ -103,7 +103,7 @@ public class HotelControllerTest {
         Mockito.when(hotelService.findById(id))
                 .thenThrow(new EntityNotFoundException("Entity not found."));
 
-        mockMvc.perform(get(baseUrl + "/{id}", id))
+        mockMvc.perform(get(baseUri + "/{id}", id))
                 .andExpect(status().isNotFound())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(content().json("{'errorMessage': 'Entity not found.'}"));
@@ -124,11 +124,11 @@ public class HotelControllerTest {
         Mockito.when(hotelService.create(hotelFromRequest))
                 .thenReturn(hotelFromRequest);
 
-        mockMvc.perform(post(baseUrl)
+        mockMvc.perform(post(baseUri)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isCreated())
-                .andExpect(header().string("Location", "/api/v1/hotel/" + id));
+                .andExpect(header().string("Location", baseUri + "/" + id));
 
         Mockito.verify(hotelMapper, Mockito.times(1))
                 .requestToEntity(request);
@@ -142,7 +142,7 @@ public class HotelControllerTest {
         HotelRequest request = createHotelRequest();
         request.setName(null);
 
-        mockMvc.perform(post(baseUrl)
+        mockMvc.perform(post(baseUri)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isBadRequest())
@@ -161,7 +161,7 @@ public class HotelControllerTest {
         Mockito.when(hotelService.updateById(id, hotel))
                 .thenReturn(hotel);
 
-        mockMvc.perform(put(baseUrl + "/{id}", id)
+        mockMvc.perform(put(baseUri + "/{id}", id)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isNoContent());
@@ -179,7 +179,7 @@ public class HotelControllerTest {
         HotelRequest request = createHotelRequest();
         request.setName(null);
 
-        mockMvc.perform(put(baseUrl + "/{id}", id)
+        mockMvc.perform(put(baseUri + "/{id}", id)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isBadRequest())
@@ -198,7 +198,7 @@ public class HotelControllerTest {
         Mockito.when(hotelService.updateById(id, hotel))
                 .thenThrow(new EntityNotFoundException("Entity not found."));
 
-        mockMvc.perform(put(baseUrl + "/{id}", id)
+        mockMvc.perform(put(baseUri + "/{id}", id)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isNotFound())
@@ -216,7 +216,7 @@ public class HotelControllerTest {
     public void givenId_whenDeleteById_thenVoid() throws Exception {
         Integer id = 1;
 
-        mockMvc.perform(delete(baseUrl + "/{id}", id))
+        mockMvc.perform(delete(baseUri + "/{id}", id))
                 .andExpect(status().isNoContent());
 
         Mockito.verify(hotelService, Mockito.times(1))
@@ -232,7 +232,7 @@ public class HotelControllerTest {
         HotelRequest request = createHotelRequest();
         request.setName(name);
 
-        mockMvc.perform(post(baseUrl)
+        mockMvc.perform(post(baseUri)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isBadRequest())
@@ -247,7 +247,7 @@ public class HotelControllerTest {
         HotelRequest request = createHotelRequest();
         request.setName(name);
 
-        mockMvc.perform(post(baseUrl)
+        mockMvc.perform(post(baseUri)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isBadRequest())
@@ -262,7 +262,7 @@ public class HotelControllerTest {
         HotelRequest request = createHotelRequest();
         request.setDescription(description);
 
-        mockMvc.perform(post(baseUrl)
+        mockMvc.perform(post(baseUri)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isBadRequest())
@@ -277,7 +277,7 @@ public class HotelControllerTest {
         HotelRequest request = createHotelRequest();
         request.setDescription(description);
 
-        mockMvc.perform(post(baseUrl)
+        mockMvc.perform(post(baseUri)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isBadRequest())
@@ -292,7 +292,7 @@ public class HotelControllerTest {
         HotelRequest request = createHotelRequest();
         request.setCity(city);
 
-        mockMvc.perform(post(baseUrl)
+        mockMvc.perform(post(baseUri)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isBadRequest())
@@ -307,7 +307,7 @@ public class HotelControllerTest {
         HotelRequest request = createHotelRequest();
         request.setCity(city);
 
-        mockMvc.perform(post(baseUrl)
+        mockMvc.perform(post(baseUri)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isBadRequest())
@@ -322,7 +322,7 @@ public class HotelControllerTest {
         HotelRequest request = createHotelRequest();
         request.setAddress(address);
 
-        mockMvc.perform(post(baseUrl)
+        mockMvc.perform(post(baseUri)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isBadRequest())
@@ -337,7 +337,7 @@ public class HotelControllerTest {
         HotelRequest request = createHotelRequest();
         request.setAddress(address);
 
-        mockMvc.perform(post(baseUrl)
+        mockMvc.perform(post(baseUri)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isBadRequest())
@@ -351,7 +351,7 @@ public class HotelControllerTest {
         HotelRequest request = createHotelRequest();
         request.setDistanceFromCenter(null);
 
-        mockMvc.perform(post(baseUrl)
+        mockMvc.perform(post(baseUri)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isBadRequest())

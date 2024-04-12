@@ -80,7 +80,7 @@ public class ExceptionControllerAdvice {
      */
     @ExceptionHandler(RuntimeException.class)
     public ResponseEntity<ErrorResponse> internalServerErrorHandler(Exception e) {
-        logExceptionHandling(e);
+        log.warn("Handle {} with message = '{}'", e.getClass().getName(), e.getMessage());
 
         return ResponseEntity.internalServerError().build();
     }
