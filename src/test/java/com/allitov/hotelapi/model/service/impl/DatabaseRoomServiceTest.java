@@ -1,7 +1,9 @@
 package com.allitov.hotelapi.model.service.impl;
 
+import com.allitov.hotelapi.model.entity.Hotel;
 import com.allitov.hotelapi.model.entity.Room;
 import com.allitov.hotelapi.model.repository.RoomRepository;
+import com.allitov.hotelapi.model.service.HotelService;
 import jakarta.persistence.EntityNotFoundException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -28,16 +30,34 @@ public class DatabaseRoomServiceTest {
     @Mock
     private RoomRepository roomRepository;
 
+    @Mock
+    private HotelService hotelService;
+
     private Room room;
+
+    private Hotel hotel;
 
     @BeforeEach
     public void setUp() {
+        hotel = Hotel.builder()
+                .id(1)
+                .name("hotel")
+                .description("description")
+                .city("city")
+                .address("address")
+                .distanceFromCenter(1.5F)
+                .rating(4.9F)
+                .numberOfRatings(100)
+                .build();
+
         room = Room.builder()
                 .id(1)
                 .description("description")
                 .number((short) 101)
                 .price(new BigDecimal("150.00"))
                 .maxPeople((short) 2)
+                .unavailableDates(List.of())
+                .hotel(hotel)
                 .build();
     }
 
@@ -85,12 +105,17 @@ public class DatabaseRoomServiceTest {
     @Test
     @DisplayName("Test create()")
     public void givenRoom_whenCreate_thenRoom() {
+        Integer hotelId = 1;
+        Mockito.when(hotelService.findById(hotelId))
+                .thenReturn(hotel);
         Mockito.when(roomRepository.save(room))
                 .thenReturn(room);
 
         Room createdRoom = roomService.create(room);
 
         assertEquals(room, createdRoom);
+        Mockito.verify(hotelService, Mockito.times(1))
+                .findById(hotelId);
         Mockito.verify(roomRepository, Mockito.times(1))
                 .save(room);
     }
@@ -99,8 +124,11 @@ public class DatabaseRoomServiceTest {
     @DisplayName("Test updateById()")
     public void givenIdAndRoom_whenUpdateById_thenRoom() {
         Integer id = 1;
+        Integer hotelId = 1;
         Mockito.when(roomRepository.findById(id))
                 .thenReturn(Optional.of(room));
+        Mockito.when(hotelService.findById(hotelId))
+                        .thenReturn(hotel);
         Mockito.when(roomRepository.save(room))
                 .thenReturn(room);
 
@@ -109,6 +137,8 @@ public class DatabaseRoomServiceTest {
         assertEquals(room, updatedRoom);
         Mockito.verify(roomRepository, Mockito.times(1))
                 .findById(id);
+        Mockito.verify(hotelService, Mockito.times(1))
+                .findById(hotelId);
         Mockito.verify(roomRepository, Mockito.times(1))
                 .save(room);
     }

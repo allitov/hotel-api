@@ -3,6 +3,7 @@ package com.allitov.hotelapi.model.service.impl;
 import com.allitov.hotelapi.exception.ExceptionMessage;
 import com.allitov.hotelapi.model.entity.Room;
 import com.allitov.hotelapi.model.repository.RoomRepository;
+import com.allitov.hotelapi.model.service.HotelService;
 import com.allitov.hotelapi.model.service.RoomService;
 import com.allitov.hotelapi.model.service.util.ServiceUtils;
 import jakarta.persistence.EntityNotFoundException;
@@ -21,6 +22,8 @@ import java.util.List;
 public class DatabaseRoomService implements RoomService {
 
     private final RoomRepository roomRepository;
+
+    private final HotelService hotelService;
 
     /**
      * Returns a list of found rooms.
@@ -52,6 +55,8 @@ public class DatabaseRoomService implements RoomService {
      */
     @Override
     public Room create(Room room) {
+        room.setHotel(hotelService.findById(room.getHotel().getId()));
+
         return roomRepository.save(room);
     }
 
@@ -65,6 +70,7 @@ public class DatabaseRoomService implements RoomService {
     @Override
     public Room updateById(Integer id, Room room) {
         Room foundRoom = findById(id);
+        room.setHotel(hotelService.findById(room.getHotel().getId()));
 
         ServiceUtils.copyNonNullProperties(room, foundRoom);
 
