@@ -14,6 +14,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -130,7 +131,7 @@ public class RoomController {
             )
     })
     @PostMapping
-    public ResponseEntity<Void> create(@RequestBody RoomRequest request) {
+    public ResponseEntity<Void> create(@Valid @RequestBody RoomRequest request) {
         log.info("Create request with body = '{}'", request);
 
         return ResponseEntity.created(
@@ -173,7 +174,8 @@ public class RoomController {
             )
     })
     @PutMapping("/{id}")
-    public ResponseEntity<Void> updateById(@PathVariable("id") Integer id, @RequestBody RoomRequest request) {
+    public ResponseEntity<Void> updateById(@PathVariable("id") Integer id,
+                                           @Valid @RequestBody RoomRequest request) {
         log.info("Update by id request with id = '{}' and body = '{}'", id, request);
         roomService.updateById(id, roomMapper.requestToEntity(request));
 
