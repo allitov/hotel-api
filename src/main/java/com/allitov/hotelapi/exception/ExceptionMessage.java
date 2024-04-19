@@ -46,4 +46,8 @@ public class ExceptionMessage {
     public final String ROOM_NULL_MAX_PEOPLE = "Maximum number of people must be specified.";
 
     public final String ROOM_INVALID_MAX_PEOPLE = "Maximum number of people must be greater than zero.";
+
+    public final String USER_BY_USERNAME_NOT_FOUND = "User with username = ''{0}'' not found.";
+
+    public final String USER_BY_ID_NOT_FOUND = "User with id = ''{0}'' not found.";
 }
