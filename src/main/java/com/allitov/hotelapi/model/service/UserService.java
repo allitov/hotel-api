@@ -14,12 +14,4 @@ public interface UserService extends CrudService<User, Integer> {
      * @return a user entity found by username.
      */
     User findByUsername(String username);
-
-    /**
-     * Checks if a user entity with specified username and email exists.
-     * @param username a username by which to find user entity.
-     * @param email an email by which to find user entity.
-     * @return <i>true</i> if user with specified username and email exists, <i>false</i> otherwise.
-     */
-    boolean existsByUsernameAndEmail(String username, String email);
 }

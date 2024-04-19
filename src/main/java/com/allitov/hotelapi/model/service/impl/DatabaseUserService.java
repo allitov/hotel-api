@@ -5,6 +5,7 @@ import com.allitov.hotelapi.model.entity.User;
 import com.allitov.hotelapi.model.repository.UserRepository;
 import com.allitov.hotelapi.model.service.UserService;
 import com.allitov.hotelapi.model.service.util.ServiceUtils;
+import jakarta.persistence.EntityExistsException;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -30,17 +31,6 @@ public class DatabaseUserService implements UserService {
                 () -> new EntityNotFoundException(
                         MessageFormat.format(ExceptionMessage.USER_BY_USERNAME_NOT_FOUND, username))
         );
-    }
-
-    /**
-     * Checks if a user entity with specified username and email exists.
-     * @param username a username by which to find user entity.
-     * @param email an email by which to find user entity.
-     * @return <i>true</i> if user with specified username and email exists, <i>false</i> otherwise.
-     */
-    @Override
-    public boolean existsByUsernameAndEmail(String username, String email) {
-        return userRepository.existsByUsernameAndEmail(username, email);
     }
 
     /**
@@ -70,9 +60,15 @@ public class DatabaseUserService implements UserService {
      * Creates a user from the specified user and returns it.
      * @param user a user to save.
      * @return a created user.
+     * @throws EntityExistsException if the user with specified username and email already exists.
      */
     @Override
     public User create(User user) {
+        if (userRepository.existsByUsernameAndEmail(user.getUsername(), user.getEmail())) {
+            throw new EntityExistsException(MessageFormat.format(
+                    ExceptionMessage.USER_ALREADY_EXISTS, user.getUsername(), user.getEmail()));
+        }
+
         return userRepository.save(user);
     }
 
