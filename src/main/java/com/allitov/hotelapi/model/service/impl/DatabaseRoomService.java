@@ -49,7 +49,7 @@ public class DatabaseRoomService implements RoomService {
     }
 
     /**
-     * Creates a room from the specified object and returns it.
+     * Creates a room from the specified room and returns it.
      * @param room a room data to save.
      * @return a created room.
      */
