@@ -10,7 +10,7 @@ import org.mapstruct.ReportingPolicy;
 import java.util.List;
 
 /**
- * The mapping class for the hotel entity.
+ * The mapping interface for the hotel entity.
  * @author allitov
  */
 @Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.IGNORE)
