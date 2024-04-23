@@ -52,4 +52,16 @@ public class ExceptionMessage {
     public final String USER_ALREADY_EXISTS = "User with username = ''{0}'' and email = ''{1}'' already exists.";
 
     public final String USER_BY_ID_NOT_FOUND = "User with id = ''{0}'' not found.";
+
+    public final String USER_BLANK_USERNAME = "Username must be specified.";
+
+    public final String USER_NULL_EMAIL = "Email must be specified.";
+
+    public final String USER_INVALID_EMAIL = "Email must be a valid email address.";
+
+    public final String USER_BLANK_PASSWORD = "Password must be specified.";
+
+    public final String USER_NULL_ROLE = "Role must be specified.";
+
+    public final String USER_INVALID_ROLE = "Role must be any of ['USER', 'ADMIN'].";
 }

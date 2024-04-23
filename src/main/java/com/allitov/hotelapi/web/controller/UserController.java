@@ -5,6 +5,7 @@ import com.allitov.hotelapi.web.dto.request.UserRequest;
 import com.allitov.hotelapi.web.dto.response.UserListResponse;
 import com.allitov.hotelapi.web.dto.response.UserResponse;
 import com.allitov.hotelapi.web.mapping.UserMapper;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -37,7 +38,7 @@ public class UserController {
     }
 
     @PostMapping
-    public ResponseEntity<Void> create(@RequestBody UserRequest request) {
+    public ResponseEntity<Void> create(@Valid @RequestBody UserRequest request) {
         log.info("Create request with body = '{}'", request);
 
         return ResponseEntity.created(
@@ -46,7 +47,8 @@ public class UserController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Void> updateById(@PathVariable("id") Integer id, @RequestBody UserRequest request) {
+    public ResponseEntity<Void> updateById(@PathVariable("id") Integer id,
+                                           @Valid @RequestBody UserRequest request) {
         log.info("Update by id request with id = '{}' and body = '{}'", id, request);
         userService.updateById(id, userMapper.requestToEntity(request));
 
