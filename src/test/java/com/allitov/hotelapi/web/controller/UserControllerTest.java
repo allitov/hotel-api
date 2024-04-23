@@ -10,6 +10,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.persistence.EntityNotFoundException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -18,6 +21,7 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.List;
+import java.util.stream.Stream;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -127,6 +131,20 @@ public class UserControllerTest {
     }
 
     @Test
+    @DisplayName("Test create() status 400")
+    public void givenInvalidUserRequest_whenCreate_thenErrorResponse() throws Exception {
+        UserRequest request = createUserRequest();
+        request.setUsername(null);
+
+        mockMvc.perform(post(baseUri)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(request)))
+                .andExpect(status().isBadRequest())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(content().json("{'errorMessage': 'Username must be specified.'}"));
+    }
+
+    @Test
     @DisplayName("Test updateById() status 204")
     public void givenIdAndUserRequest_whenUpdateById_thenVoid() throws Exception {
         Integer id = 1;
@@ -146,6 +164,21 @@ public class UserControllerTest {
                 .requestToEntity(request);
         Mockito.verify(userService, Mockito.times(1))
                 .updateById(id, user);
+    }
+
+    @Test
+    @DisplayName("Test updateById() status 400")
+    public void givenIdAndInvalidUserRequest_whenUpdateById_thenErrorResponse() throws Exception {
+        Integer id = 1;
+        UserRequest request = createUserRequest();
+        request.setUsername(null);
+
+        mockMvc.perform(put(baseUri + "/{id}", id)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(request)))
+                .andExpect(status().isBadRequest())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(content().json("{'errorMessage': 'Username must be specified.'}"));
     }
 
     @Test
@@ -184,6 +217,95 @@ public class UserControllerTest {
                 .deleteById(id);
     }
 
+    // validation tests
+
+    @ParameterizedTest
+    @MethodSource("createBlankStrings")
+    @DisplayName("Test UserRequest validation with blank username")
+    public void givenBlankUserRequestUsername_whenCreate_thenErrorResponse(String username) throws Exception {
+        UserRequest request = createUserRequest();
+        request.setUsername(username);
+
+        mockMvc.perform(post(baseUri)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(request)))
+                .andExpect(status().isBadRequest())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(content().json("{'errorMessage': 'Username must be specified.'}"));
+    }
+
+    @Test
+    @DisplayName("Test UserRequest validation with null email")
+    public void givenBullUserRequestEmail_whenCreate_thenErrorResponse() throws Exception {
+        UserRequest request = createUserRequest();
+        request.setEmail(null);
+
+        mockMvc.perform(post(baseUri)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(request)))
+                .andExpect(status().isBadRequest())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(content().json("{'errorMessage': 'Email must be specified.'}"));
+    }
+
+    @ParameterizedTest
+    @MethodSource("createInvalidEmails")
+    @DisplayName("Test UserRequest validation with invalid email")
+    public void givenInvalidUserRequestEmail_whenCreate_thenErrorResponse(String email) throws Exception {
+        UserRequest request = createUserRequest();
+        request.setEmail(email);
+
+        mockMvc.perform(post(baseUri)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(request)))
+                .andExpect(status().isBadRequest())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(content().json("{'errorMessage': 'Email must be a valid email address.'}"));
+    }
+
+    @ParameterizedTest
+    @MethodSource("createBlankStrings")
+    @DisplayName("Test UserRequest validation with blank password")
+    public void givenBlankUserRequestPassword_whenCreate_thenErrorResponse(String password) throws Exception {
+        UserRequest request = createUserRequest();
+        request.setPassword(password);
+
+        mockMvc.perform(post(baseUri)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(request)))
+                .andExpect(status().isBadRequest())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(content().json("{'errorMessage': 'Password must be specified.'}"));
+    }
+
+    @Test
+    @DisplayName("Test UserRequest validation with null role")
+    public void givenNullUserRequestRole_whenCreate_thenErrorResponse() throws Exception {
+        UserRequest request = createUserRequest();
+        request.setRole(null);
+
+        mockMvc.perform(post(baseUri)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(request)))
+                .andExpect(status().isBadRequest())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(content().json("{'errorMessage': 'Role must be specified.'}"));
+    }
+
+    @Test
+    @DisplayName("Test UserRequest validation with invalid role")
+    public void givenInvalidUserRequestRole_whenCreate_thenErrorResponse() throws Exception {
+        UserRequest request = createUserRequest();
+        request.setRole("INVALID_ROLE");
+
+        mockMvc.perform(post(baseUri)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(request)))
+                .andExpect(status().isBadRequest())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(content().json("{'errorMessage': \"Role must be any of ['USER', 'ADMIN'].\"}"));
+    }
+
     private UserResponse createUserResponse() {
         return UserResponse.builder()
                 .id(1)
@@ -200,5 +322,21 @@ public class UserControllerTest {
                 .password("password")
                 .role("USER")
                 .build();
+    }
+
+    private static Stream<Arguments> createBlankStrings() {
+        return Stream.of(
+                Arguments.of((Object) null),
+                Arguments.of("     "),
+                Arguments.of("\n\n  \n")
+        );
+    }
+
+    private static Stream<Arguments> createInvalidEmails() {
+        return Stream.of(
+                Arguments.of("email@"),
+                Arguments.of("email.com"),
+                Arguments.of("@email.com")
+        );
     }
 }
