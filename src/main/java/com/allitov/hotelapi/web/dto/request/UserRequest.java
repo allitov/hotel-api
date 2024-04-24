@@ -37,6 +37,6 @@ public class UserRequest {
 
     @NotNull(message = ExceptionMessage.USER_NULL_ROLE)
     @ValuesOfEnum(enumClass = User.RoleType.class, message = ExceptionMessage.USER_INVALID_ROLE)
-    @Schema(example = "[\"USER\", \"ADMIN\"]", allowableValues = {"USER", "ADMIN"})
+    @Schema(example = "USER", allowableValues = {"USER", "ADMIN"})
     private String role;
 }

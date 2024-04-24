@@ -22,6 +22,10 @@ import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
 
+/**
+ * The controller class for the user entity.
+ * @author allitov
+ */
 @Slf4j
 @RestController
 @RequestMapping("/api/v1/user")
@@ -117,7 +121,7 @@ public class UserController {
             ),
             @ApiResponse(
                     description = "Returns status 409 and error message " +
-                            "if request contains already existing username and email.",
+                            "if request contains already existing username.",
                     responseCode = "409",
                     content = {
                             @Content(
@@ -171,7 +175,7 @@ public class UserController {
             ),
             @ApiResponse(
                     description = "Returns status 409 and error message " +
-                            "if request contains already existing username and email.",
+                            "if request contains already existing username.",
                     responseCode = "409",
                     content = {
                             @Content(
