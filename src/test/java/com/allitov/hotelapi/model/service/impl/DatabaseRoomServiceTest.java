@@ -160,7 +160,7 @@ public class DatabaseRoomServiceTest {
 
     @Test
     @DisplayName("Test deleteById()")
-    public void givenVoid_whenDeleteById_thenVoid() {
+    public void givenId_whenDeleteById_thenVoid() {
         Integer id = 1;
 
         roomService.deleteById(id);

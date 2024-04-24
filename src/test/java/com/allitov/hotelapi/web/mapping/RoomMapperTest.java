@@ -24,7 +24,7 @@ public class RoomMapperTest {
     private Room room;
 
     @BeforeEach
-    public void setUp() {
+    public void setup() {
         RoomMapperImpl roomMapperImpl = new RoomMapperImpl();
         roomMapperImpl.setDelegate(new RoomMapperImpl_());
         roomMapper = roomMapperImpl;

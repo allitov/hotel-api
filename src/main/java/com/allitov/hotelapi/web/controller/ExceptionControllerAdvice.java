@@ -1,6 +1,7 @@
 package com.allitov.hotelapi.web.controller;
 
 import com.allitov.hotelapi.web.dto.response.ErrorResponse;
+import jakarta.persistence.EntityExistsException;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.support.DefaultMessageSourceResolvable;
@@ -34,6 +35,18 @@ public class ExceptionControllerAdvice {
         logExceptionHandling(e);
 
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ErrorResponse(e.getMessage()));
+    }
+
+    /**
+     * Creates responses for <em>conflict</em> exception types.
+     * @param e exception to handle
+     * @return status 409 and response body.
+     */
+    @ExceptionHandler(EntityExistsException.class)
+    public ResponseEntity<ErrorResponse> entityExistsHandler(Exception e) {
+        logExceptionHandling(e);
+
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(new ErrorResponse(e.getMessage()));
     }
 
     /**

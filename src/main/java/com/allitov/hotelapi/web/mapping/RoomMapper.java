@@ -12,7 +12,7 @@ import org.mapstruct.ReportingPolicy;
 import java.util.List;
 
 /**
- * The mapping class for the room entity.
+ * The mapping interface for the room entity.
  * @author allitov
  */
 @Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.IGNORE)
