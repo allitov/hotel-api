@@ -113,7 +113,7 @@ public class DatabaseUserServiceTest {
     @Test
     @DisplayName("Test create()")
     public void givenUser_whenCreate_thenUser() {
-        Mockito.when(userRepository.existsByUsernameAndEmail(user.getUsername(), user.getEmail()))
+        Mockito.when(userRepository.existsByUsername(user.getUsername()))
                 .thenReturn(false);
         Mockito.when(userRepository.save(user))
                 .thenReturn(user);
@@ -122,7 +122,7 @@ public class DatabaseUserServiceTest {
 
         assertEquals(user, createdUser);
         Mockito.verify(userRepository, Mockito.times(1))
-                .existsByUsernameAndEmail(user.getUsername(), user.getEmail());
+                .existsByUsername(user.getUsername());
         Mockito.verify(userRepository, Mockito.times(1))
                 .save(user);
     }
@@ -130,13 +130,13 @@ public class DatabaseUserServiceTest {
     @Test
     @DisplayName("Test create() EntityExistsException")
     public void givenExistingUser_whenCreate_thenException() {
-        Mockito.when(userRepository.existsByUsernameAndEmail(user.getUsername(), user.getEmail()))
+        Mockito.when(userRepository.existsByUsername(user.getUsername()))
                 .thenReturn(true);
 
         assertThrows(EntityExistsException.class, () -> userService.create(user));
 
         Mockito.verify(userRepository, Mockito.times(1))
-                .existsByUsernameAndEmail(user.getUsername(), user.getEmail());
+                .existsByUsername(user.getUsername());
         Mockito.verify(userRepository, Mockito.times(0))
                 .save(user);
     }
@@ -147,6 +147,8 @@ public class DatabaseUserServiceTest {
         Integer id = 1;
         Mockito.when(userRepository.findById(id))
                 .thenReturn(Optional.of(user));
+        Mockito.when(userRepository.existsByUsername(user.getUsername()))
+                .thenReturn(false);
         Mockito.when(userRepository.save(user))
                 .thenReturn(user);
 
@@ -155,6 +157,8 @@ public class DatabaseUserServiceTest {
         assertEquals(user, updatedUser);
         Mockito.verify(userRepository, Mockito.times(1))
                 .findById(id);
+        Mockito.verify(userRepository, Mockito.times(1))
+                .existsByUsername(user.getUsername());
         Mockito.verify(userRepository, Mockito.times(1))
                 .save(user);
     }
@@ -170,6 +174,25 @@ public class DatabaseUserServiceTest {
 
         Mockito.verify(userRepository, Mockito.times(1))
                 .findById(id);
+        Mockito.verify(userRepository, Mockito.times(0))
+                .save(user);
+    }
+
+    @Test
+    @DisplayName("Test updateById() EntityExistsException")
+    public void givenIdAndExistingUserUsername_whenUpdateById_thenException() {
+        Integer id = 1;
+        Mockito.when(userRepository.findById(id))
+                .thenReturn(Optional.of(user));
+        Mockito.when(userRepository.existsByUsername(user.getUsername()))
+                .thenReturn(true);
+
+        assertThrows(EntityExistsException.class, () -> userService.updateById(id, user));
+
+        Mockito.verify(userRepository, Mockito.times(1))
+                .findById(id);
+        Mockito.verify(userRepository, Mockito.times(1))
+                .existsByUsername(user.getUsername());
         Mockito.verify(userRepository, Mockito.times(0))
                 .save(user);
     }

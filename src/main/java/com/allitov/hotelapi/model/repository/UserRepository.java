@@ -19,10 +19,9 @@ public interface UserRepository extends JpaRepository<User, Integer> {
     Optional<User> findByUsername(String username);
 
     /**
-     * Checks if a user entity with specified username and email exists.
+     * Checks if a user entity with the specified username exists.
      * @param username a username by which to find user entity.
-     * @param email an email by which to find user entity.
-     * @return <i>true</i> if user with specified username and email exists, <i>false</i> otherwise.
+     * @return <i>true</i> if user with the specified username exists, <i>false</i> otherwise.
      */
-    boolean existsByUsernameAndEmail(String username, String email);
+    boolean existsByUsername(String username);
 }

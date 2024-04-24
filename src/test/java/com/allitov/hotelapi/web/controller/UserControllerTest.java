@@ -7,6 +7,7 @@ import com.allitov.hotelapi.web.dto.response.UserListResponse;
 import com.allitov.hotelapi.web.dto.response.UserResponse;
 import com.allitov.hotelapi.web.mapping.UserMapper;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import jakarta.persistence.EntityExistsException;
 import jakarta.persistence.EntityNotFoundException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -145,6 +146,29 @@ public class UserControllerTest {
     }
 
     @Test
+    @DisplayName("Test create() status 409")
+    public void givenExistingUserRequestUsername_whenCreate_thenErrorResponse() throws Exception {
+        UserRequest request = createUserRequest();
+        User user = new User();
+        Mockito.when(userMapper.requestToEntity(request))
+                .thenReturn(user);
+        Mockito.when(userService.create(user))
+                .thenThrow(new EntityExistsException("Entity already exists."));
+
+        mockMvc.perform(post(baseUri)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(request)))
+                .andExpect(status().isConflict())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(content().json("{'errorMessage': 'Entity already exists.'}"));
+
+        Mockito.verify(userMapper, Mockito.times(1))
+                .requestToEntity(request);
+        Mockito.verify(userService, Mockito.times(1))
+                .create(user);
+    }
+
+    @Test
     @DisplayName("Test updateById() status 204")
     public void givenIdAndUserRequest_whenUpdateById_thenVoid() throws Exception {
         Integer id = 1;
@@ -198,6 +222,30 @@ public class UserControllerTest {
                 .andExpect(status().isNotFound())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(content().json("{'errorMessage': 'Entity not found.'}"));
+
+        Mockito.verify(userMapper, Mockito.times(1))
+                .requestToEntity(request);
+        Mockito.verify(userService, Mockito.times(1))
+                .updateById(id, user);
+    }
+
+    @Test
+    @DisplayName("Test updateById() status 409")
+    public void givenIdAndExistingUserRequestUsername_whenUpdateById_thenErrorResponse() throws Exception {
+        Integer id = 1;
+        UserRequest request = createUserRequest();
+        User user = new User();
+        Mockito.when(userMapper.requestToEntity(request))
+                .thenReturn(user);
+        Mockito.when(userService.updateById(id, user))
+                .thenThrow(new EntityExistsException("Entity already exists."));
+
+        mockMvc.perform(put(baseUri + "/{id}", id)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(request)))
+                .andExpect(status().isConflict())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(content().json("{'errorMessage': 'Entity already exists.'}"));
 
         Mockito.verify(userMapper, Mockito.times(1))
                 .requestToEntity(request);

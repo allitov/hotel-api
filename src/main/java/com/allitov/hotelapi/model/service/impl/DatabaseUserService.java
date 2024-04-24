@@ -64,9 +64,9 @@ public class DatabaseUserService implements UserService {
      */
     @Override
     public User create(User user) {
-        if (userRepository.existsByUsernameAndEmail(user.getUsername(), user.getEmail())) {
+        if (userRepository.existsByUsername(user.getUsername())) {
             throw new EntityExistsException(MessageFormat.format(
-                    ExceptionMessage.USER_ALREADY_EXISTS, user.getUsername(), user.getEmail()));
+                    ExceptionMessage.USER_ALREADY_EXISTS, user.getUsername()));
         }
 
         return userRepository.save(user);
@@ -78,15 +78,15 @@ public class DatabaseUserService implements UserService {
      * @param user a user to take data from.
      * @return an updated user.
      * @throws EntityNotFoundException if the user with the specified ID was not found.
+     * @throws EntityExistsException if the user with the specified username already exists.
      */
     @Override
     public User updateById(Integer id, User user) {
-        if (userRepository.existsByUsernameAndEmail(user.getUsername(), user.getEmail())) {
-            throw new EntityExistsException(MessageFormat.format(
-                    ExceptionMessage.USER_ALREADY_EXISTS, user.getUsername(), user.getEmail()));
-        }
-
         User foundUser = findById(id);
+        if (userRepository.existsByUsername(user.getUsername())) {
+            throw new EntityExistsException(
+                    MessageFormat.format(ExceptionMessage.USER_ALREADY_EXISTS, user.getUsername()));
+        }
         ServiceUtils.copyNonNullProperties(user, foundUser);
 
         return userRepository.save(foundUser);

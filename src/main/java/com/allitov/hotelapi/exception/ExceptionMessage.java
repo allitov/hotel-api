@@ -49,7 +49,7 @@ public class ExceptionMessage {
 
     public final String USER_BY_USERNAME_NOT_FOUND = "User with username = ''{0}'' not found.";
 
-    public final String USER_ALREADY_EXISTS = "User with username = ''{0}'' and email = ''{1}'' already exists.";
+    public final String USER_ALREADY_EXISTS = "User with username = ''{0}'' already exists.";
 
     public final String USER_BY_ID_NOT_FOUND = "User with id = ''{0}'' not found.";
 
