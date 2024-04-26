@@ -5,6 +5,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDate;
+
 /**
  * The DTO response class for the booking entity.
  * @author allitov
@@ -21,7 +23,7 @@ public class BookingResponse {
 
     private Integer userId;
 
-    private String from;
+    private LocalDate from;
 
-    private String to;
+    private LocalDate to;
 }
