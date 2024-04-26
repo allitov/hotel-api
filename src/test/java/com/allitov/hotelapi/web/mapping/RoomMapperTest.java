@@ -8,15 +8,12 @@ import com.allitov.hotelapi.web.dto.response.RoomResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.math.BigDecimal;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-@ExtendWith(MockitoExtension.class)
 public class RoomMapperTest {
 
     private RoomMapper roomMapper;
@@ -42,7 +39,7 @@ public class RoomMapperTest {
 
     @Test
     @DisplayName("Test requestToEntity()")
-    public void givenRoomRequest_whenRequestToEntity_thenReturnRoom() {
+    public void givenRoomRequest_whenRequestToEntity_thenRoom() {
         RoomRequest request = RoomRequest.builder()
                 .hotelId(1)
                 .description("description")
