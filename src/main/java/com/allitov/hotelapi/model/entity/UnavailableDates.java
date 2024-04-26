@@ -23,13 +23,13 @@ public class UnavailableDates {
     @EqualsAndHashCode.Exclude
     private Integer id;
 
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "room_id", referencedColumnName = "id")
     private Room room;
 
-    @Column(name = "from")
+    @Column(name = "from_date")
     private LocalDate from;
 
-    @Column(name = "to")
+    @Column(name = "to_date")
     private LocalDate to;
 }

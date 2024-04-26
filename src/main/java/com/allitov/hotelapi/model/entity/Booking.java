@@ -31,9 +31,9 @@ public class Booking {
     @JoinColumn(name = "user_id", referencedColumnName = "id")
     private User user;
 
-    @Column(name = "from")
+    @Column(name = "from_date")
     private LocalDate from;
 
-    @Column(name = "to")
+    @Column(name = "to_date")
     private LocalDate to;
 }
