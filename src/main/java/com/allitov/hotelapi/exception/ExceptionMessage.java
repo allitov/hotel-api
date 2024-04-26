@@ -64,4 +64,8 @@ public class ExceptionMessage {
     public final String USER_NULL_ROLE = "Role must be specified.";
 
     public final String USER_INVALID_ROLE = "Role must be any of ['USER', 'ADMIN'].";
+
+    public final String BOOKING_INVALID_DATE = "'from' date can't be after 'to' date.";
+
+    public final String BOOKING_UNAVAILABLE_DATES = "Dates from ''{0}'' to ''{1}'' are unavailable.";
 }
