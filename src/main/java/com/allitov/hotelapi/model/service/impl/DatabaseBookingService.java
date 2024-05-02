@@ -4,6 +4,7 @@ import com.allitov.hotelapi.exception.ExceptionMessage;
 import com.allitov.hotelapi.model.entity.Booking;
 import com.allitov.hotelapi.model.entity.UnavailableDates;
 import com.allitov.hotelapi.model.repository.BookingRepository;
+import com.allitov.hotelapi.model.repository.UnavailableDatesRepository;
 import com.allitov.hotelapi.model.service.BookingService;
 import com.allitov.hotelapi.model.service.RoomService;
 import com.allitov.hotelapi.model.service.UserService;
@@ -28,6 +29,8 @@ public class DatabaseBookingService implements BookingService {
 
     private final UserService userService;
 
+    private final UnavailableDatesRepository unavailableDatesRepository;
+
     /**
      * Returns a list of found bookings.
      * @return a list of found bookings.
@@ -50,12 +53,13 @@ public class DatabaseBookingService implements BookingService {
             throw new DateTimeException(ExceptionMessage.BOOKING_INVALID_DATE);
         }
         booking.setRoom(roomService.findById(booking.getRoom().getId()));
+        booking.setUser(userService.findById(booking.getUser().getId()));
         if (areDatesUnavailable(booking)) {
             throw new DateTimeException(MessageFormat.format(
                     ExceptionMessage.BOOKING_UNAVAILABLE_DATES,
                     booking.getFrom(), booking.getTo()));
         }
-        booking.setUser(userService.findById(booking.getUser().getId()));
+        unavailableDatesRepository.save(createUnavailableDatesFromBooking(booking));
 
         return bookingRepository.save(booking);
     }
@@ -73,5 +77,13 @@ public class DatabaseBookingService implements BookingService {
         }
 
         return false;
+    }
+
+    private UnavailableDates createUnavailableDatesFromBooking(Booking booking) {
+        return UnavailableDates.builder()
+                .room(booking.getRoom())
+                .from(booking.getFrom())
+                .to(booking.getTo())
+                .build();
     }
 }

@@ -5,6 +5,7 @@ import com.allitov.hotelapi.model.entity.Room;
 import com.allitov.hotelapi.model.entity.UnavailableDates;
 import com.allitov.hotelapi.model.entity.User;
 import com.allitov.hotelapi.model.repository.BookingRepository;
+import com.allitov.hotelapi.model.repository.UnavailableDatesRepository;
 import com.allitov.hotelapi.model.service.RoomService;
 import com.allitov.hotelapi.model.service.UserService;
 import jakarta.persistence.EntityNotFoundException;
@@ -44,11 +45,16 @@ public class DatabaseBookingServiceTest {
     @Mock
     private UserService userService;
 
+    @Mock
+    private UnavailableDatesRepository unavailableDatesRepository;
+
     private Booking booking;
 
     private Room room;
 
     private User user;
+
+    private UnavailableDates unavailableDates;
 
     @BeforeEach
     public void setUp() {
@@ -73,6 +79,13 @@ public class DatabaseBookingServiceTest {
                 .id(1)
                 .room(room)
                 .user(user)
+                .from(LocalDate.of(2023, 12, 31))
+                .to(LocalDate.of(2024, 1, 31))
+                .build();
+
+        unavailableDates = UnavailableDates.builder()
+                .id(1)
+                .room(room)
                 .from(LocalDate.of(2023, 12, 31))
                 .to(LocalDate.of(2024, 1, 31))
                 .build();
@@ -101,6 +114,8 @@ public class DatabaseBookingServiceTest {
                 .thenReturn(room);
         Mockito.when(bookingRepository.save(booking))
                 .thenReturn(booking);
+        Mockito.when(unavailableDatesRepository.save(unavailableDates))
+                .thenReturn(unavailableDates);
 
         Booking createdBooking = bookingService.create(booking);
 
@@ -111,6 +126,8 @@ public class DatabaseBookingServiceTest {
                 .findById(1);
         Mockito.verify(bookingRepository, Mockito.times(1))
                 .save(booking);
+        Mockito.verify(unavailableDatesRepository, Mockito.times(1))
+                .save(unavailableDates);
     }
 
     @Test
@@ -127,6 +144,8 @@ public class DatabaseBookingServiceTest {
                 .findById(1);
         Mockito.verify(roomService, Mockito.times(0))
                 .findById(1);
+        Mockito.verify(unavailableDatesRepository, Mockito.times(0))
+                .save(unavailableDates);
     }
 
     @Test
@@ -141,6 +160,8 @@ public class DatabaseBookingServiceTest {
                 .findById(1);
         Mockito.verify(userService, Mockito.times(0))
                 .findById(1);
+        Mockito.verify(unavailableDatesRepository, Mockito.times(0))
+                .save(unavailableDates);
         Mockito.verify(bookingRepository, Mockito.times(0))
                 .save(booking);
     }
@@ -159,6 +180,8 @@ public class DatabaseBookingServiceTest {
                 .findById(1);
         Mockito.verify(userService, Mockito.times(1))
                 .findById(1);
+        Mockito.verify(unavailableDatesRepository, Mockito.times(0))
+                .save(unavailableDates);
         Mockito.verify(bookingRepository, Mockito.times(0))
                 .save(booking);
     }
@@ -171,13 +194,17 @@ public class DatabaseBookingServiceTest {
         room.setUnavailableDates(List.of(unavailableDates));
         Mockito.when(roomService.findById(1))
                 .thenReturn(room);
+        Mockito.when(userService.findById(1))
+                .thenReturn(user);
 
         assertThrows(DateTimeException.class, () -> bookingService.create(booking));
 
         Mockito.verify(roomService, Mockito.times(1))
                 .findById(1);
-        Mockito.verify(userService, Mockito.times(0))
+        Mockito.verify(userService, Mockito.times(1))
                 .findById(1);
+        Mockito.verify(unavailableDatesRepository, Mockito.times(0))
+                .save(unavailableDates);
         Mockito.verify(bookingRepository, Mockito.times(0))
                 .save(booking);
     }
