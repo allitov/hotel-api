@@ -15,7 +15,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
  * @author allitov
  */
 @Setter
-public class BookingMapperDecorator implements BookingMapper {
+public abstract class BookingMapperDecorator implements BookingMapper {
 
     @Autowired
     @Qualifier("delegate")
