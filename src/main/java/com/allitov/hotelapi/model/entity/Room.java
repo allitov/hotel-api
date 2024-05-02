@@ -39,7 +39,7 @@ public class Room {
     @EqualsAndHashCode.Exclude
     private Short maxPeople;
 
-    @OneToMany(fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "room", fetch = FetchType.LAZY)
     @EqualsAndHashCode.Exclude
     private List<UnavailableDates> unavailableDates;
 
