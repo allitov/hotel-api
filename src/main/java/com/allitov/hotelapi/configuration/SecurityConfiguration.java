@@ -1,7 +1,9 @@
 package com.allitov.hotelapi.configuration;
 
+import com.allitov.hotelapi.model.entity.User;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.Customizer;
@@ -50,7 +52,17 @@ public class SecurityConfiguration {
                                            AuthenticationManager authenticationManager,
                                            AuthenticationEntryPoint authenticationEntryPoint,
                                            AccessDeniedHandler accessDeniedHandler) throws Exception {
-        httpSecurity.authorizeRequests(auth -> auth.anyRequest().permitAll())
+        httpSecurity.authorizeHttpRequests(auth -> auth
+                        .requestMatchers("/v3/api-docs/**", "/swagger-ui/**")
+                            .permitAll()
+                        .requestMatchers(HttpMethod.POST, "/api/v1/user")
+                            .permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/v1/hotel", "/api/v1/room")
+                            .hasAnyRole(User.RoleType.USER.name(), User.RoleType.ADMIN.name())
+                        .requestMatchers(HttpMethod.POST, "/api/v1/booking")
+                            .hasAnyRole(User.RoleType.USER.name(), User.RoleType.ADMIN.name())
+                        .anyRequest()
+                            .hasRole(User.RoleType.ADMIN.name()))
                 .csrf(AbstractHttpConfigurer::disable)
                 .httpBasic(Customizer.withDefaults())
                 .sessionManagement(configurer -> configurer.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
