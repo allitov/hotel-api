@@ -8,5 +8,6 @@
     <include file="/db/changelog/db.changelog-add-room-table.xml"/>
     <include file="/db/changelog/db.changelog-add-unavailable-dates-table.xml"/>
     <include file="/db/changelog/db.changelog-add-users-table.xml"/>
+    <include file="/db/changelog/db.changelog-add-booking-table.xml"/>
 
 </databaseChangeLog>

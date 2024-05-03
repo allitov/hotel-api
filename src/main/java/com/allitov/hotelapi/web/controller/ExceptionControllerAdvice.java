@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
+import java.time.DateTimeException;
 import java.util.stream.Collectors;
 
 /**
@@ -57,7 +58,8 @@ public class ExceptionControllerAdvice {
     @ExceptionHandler({
             MethodArgumentNotValidException.class,
             MethodArgumentTypeMismatchException.class,
-            HttpMessageNotReadableException.class
+            HttpMessageNotReadableException.class,
+            DateTimeException.class
     })
     public ResponseEntity<ErrorResponse> badRequestHandler(Exception e) {
         logExceptionHandling(e);

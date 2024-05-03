@@ -8,5 +8,4 @@ import org.springframework.data.jpa.repository.JpaRepository;
  * @author allitov
  */
 public interface HotelRepository extends JpaRepository<Hotel, Integer> {
-
 }
