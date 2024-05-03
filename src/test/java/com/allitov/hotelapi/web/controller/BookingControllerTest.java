@@ -142,6 +142,64 @@ public class BookingControllerTest {
                 .create(booking);
     }
 
+    // validation tests
+
+    @Test
+    @DisplayName("Test BookingRequest validation with null room id")
+    public void givenNullBookingRequestRoomId_whenCreate_thenErrorResponse() throws Exception {
+        BookingRequest request = createBookingRequest();
+        request.setRoomId(null);
+
+        mockMvc.perform(post(baseUri)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(request)))
+                .andExpect(status().isBadRequest())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(content().json("{'errorMessage': 'Room id must be specified.'}"));
+    }
+
+    @Test
+    @DisplayName("Test BookingRequest validation with null user id")
+    public void givenNullBookingRequestUserId_whenCreate_thenErrorResponse() throws Exception {
+        BookingRequest request = createBookingRequest();
+        request.setUserId(null);
+
+        mockMvc.perform(post(baseUri)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(request)))
+                .andExpect(status().isBadRequest())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(content().json("{'errorMessage': 'User id must be specified.'}"));
+    }
+
+    @Test
+    @DisplayName("Test BookingRequest validation with null 'from' date")
+    public void givenNullBookingRequestFromDate_whenCreate_thenErrorResponse() throws Exception {
+        BookingRequest request = createBookingRequest();
+        request.setFrom(null);
+
+        mockMvc.perform(post(baseUri)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(request)))
+                .andExpect(status().isBadRequest())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(content().json("{'errorMessage': \"'from' date must be specified.\"}"));
+    }
+
+    @Test
+    @DisplayName("Test BookingRequest validation with null 'to' date")
+    public void givenNullBookingRequestToDate_whenCreate_thenErrorResponse() throws Exception {
+        BookingRequest request = createBookingRequest();
+        request.setTo(null);
+
+        mockMvc.perform(post(baseUri)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(request)))
+                .andExpect(status().isBadRequest())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(content().json("{'errorMessage': \"'to' date must be specified.\"}"));
+    }
+
     private BookingRequest createBookingRequest() {
         return BookingRequest.builder()
                 .roomId(1)
