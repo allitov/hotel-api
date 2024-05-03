@@ -11,6 +11,7 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -36,7 +37,9 @@ public class BookingController {
 
     @Operation(
             summary = "Get all bookings",
-            description = "Get all bookings. Returns a list of bookings."
+            description = "Get all bookings. Returns a list of bookings. " +
+                    "Requires any of the authorities: ['ADMIN'].",
+            security = @SecurityRequirement(name = "Basic authorisation")
     )
     @ApiResponses({
             @ApiResponse(
@@ -45,6 +48,26 @@ public class BookingController {
                     content = {
                             @Content(
                                     schema = @Schema(implementation = BookingListResponse.class),
+                                    mediaType = "application/json"
+                            )
+                    }
+            ),
+            @ApiResponse(
+                    description = "Returns status 401 and error message if user is not authorized.",
+                    responseCode = "401",
+                    content = {
+                            @Content(
+                                    schema = @Schema(implementation = ErrorResponse.class),
+                                    mediaType = "application/json"
+                            )
+                    }
+            ),
+            @ApiResponse(
+                    description = "Returns status 403 and error message if user has no required authorities.",
+                    responseCode = "403",
+                    content = {
+                            @Content(
+                                    schema = @Schema(implementation = ErrorResponse.class),
                                     mediaType = "application/json"
                             )
                     }
@@ -59,7 +82,9 @@ public class BookingController {
 
     @Operation(
             summary = "Create booking",
-            description = "Create booking. Returns a created booking."
+            description = "Create booking. Returns a created booking. " +
+                    "Requires any of the authorities: ['ADMIN', 'USER'].",
+            security = @SecurityRequirement(name = "Basic authorisation")
     )
     @ApiResponses({
             @ApiResponse(
@@ -70,6 +95,26 @@ public class BookingController {
             @ApiResponse(
                     description = "Returns status 400 and error message if request has invalid values.",
                     responseCode = "400",
+                    content = {
+                            @Content(
+                                    schema = @Schema(implementation = ErrorResponse.class),
+                                    mediaType = "application/json"
+                            )
+                    }
+            ),
+            @ApiResponse(
+                    description = "Returns status 401 and error message if user is not authorized.",
+                    responseCode = "401",
+                    content = {
+                            @Content(
+                                    schema = @Schema(implementation = ErrorResponse.class),
+                                    mediaType = "application/json"
+                            )
+                    }
+            ),
+            @ApiResponse(
+                    description = "Returns status 403 and error message if user has no required authorities.",
+                    responseCode = "403",
                     content = {
                             @Content(
                                     schema = @Schema(implementation = ErrorResponse.class),

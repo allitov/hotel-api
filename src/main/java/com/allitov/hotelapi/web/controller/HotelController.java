@@ -13,6 +13,7 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -39,7 +40,9 @@ public class HotelController {
 
     @Operation(
             summary = "Get all hotels",
-            description = "Get all hotels. Returns a list of hotels."
+            description = "Get all hotels. Returns a list of hotels. " +
+                    "Requires any of the authorities: ['ADMIN', 'USER'].",
+            security = @SecurityRequirement(name = "Basic authorisation")
     )
     @ApiResponses({
             @ApiResponse(
@@ -51,7 +54,27 @@ public class HotelController {
                                     mediaType = "application/json"
                             )
                     }
-            )
+            ),
+            @ApiResponse(
+                    description = "Returns status 401 and error message if user is not authorized.",
+                    responseCode = "401",
+                    content = {
+                            @Content(
+                                    schema = @Schema(implementation = ErrorResponse.class),
+                                    mediaType = "application/json"
+                            )
+                    }
+            ),
+            @ApiResponse(
+                    description = "Returns status 403 and error message if user has no required authorities.",
+                    responseCode = "403",
+                    content = {
+                            @Content(
+                                    schema = @Schema(implementation = ErrorResponse.class),
+                                    mediaType = "application/json"
+                            )
+                    }
+            ),
     })
     @GetMapping
     public ResponseEntity<HotelListResponse> findAll() {
@@ -62,10 +85,12 @@ public class HotelController {
 
     @Operation(
             summary = "Get hotel by id",
-            description = "Get hotel by id. Returns a hotel with requested id.",
+            description = "Get hotel by id. Returns a hotel with requested id. " +
+                    "Requires any of the authorities: ['ADMIN', 'USER'].",
             parameters = {
                     @Parameter(name = "id", example = "1")
-            }
+            },
+            security = @SecurityRequirement(name = "Basic authorisation")
     )
     @ApiResponses({
             @ApiResponse(
@@ -74,6 +99,26 @@ public class HotelController {
                     content = {
                             @Content(
                                     schema = @Schema(implementation = HotelResponse.class),
+                                    mediaType = "application/json"
+                            )
+                    }
+            ),
+            @ApiResponse(
+                    description = "Returns status 401 and error message if user is not authorized.",
+                    responseCode = "401",
+                    content = {
+                            @Content(
+                                    schema = @Schema(implementation = ErrorResponse.class),
+                                    mediaType = "application/json"
+                            )
+                    }
+            ),
+            @ApiResponse(
+                    description = "Returns status 403 and error message if user has no required authorities.",
+                    responseCode = "403",
+                    content = {
+                            @Content(
+                                    schema = @Schema(implementation = ErrorResponse.class),
                                     mediaType = "application/json"
                             )
                     }
@@ -98,7 +143,9 @@ public class HotelController {
 
     @Operation(
             summary = "Create hotel",
-            description = "Create hotel. Returns a created hotel location."
+            description = "Create hotel. Returns a created hotel location. " +
+                    "Requires any of the authorities: ['ADMIN'].",
+            security = @SecurityRequirement(name = "Basic authorisation")
     )
     @ApiResponses({
             @ApiResponse(
@@ -118,6 +165,26 @@ public class HotelController {
                                     mediaType = "application/json"
                             )
                     }
+            ),
+            @ApiResponse(
+                    description = "Returns status 401 and error message if user is not authorized.",
+                    responseCode = "401",
+                    content = {
+                            @Content(
+                                    schema = @Schema(implementation = ErrorResponse.class),
+                                    mediaType = "application/json"
+                            )
+                    }
+            ),
+            @ApiResponse(
+                    description = "Returns status 403 and error message if user has no required authorities.",
+                    responseCode = "403",
+                    content = {
+                            @Content(
+                                    schema = @Schema(implementation = ErrorResponse.class),
+                                    mediaType = "application/json"
+                            )
+                    }
             )
     })
     @PostMapping
@@ -131,10 +198,12 @@ public class HotelController {
 
     @Operation(
             summary = "Update hotel by id",
-            description = "Update hotel by id. Returns status 204.",
+            description = "Update hotel by id. Returns status 204. " +
+                    "Requires any of the authorities: ['ADMIN'].",
             parameters = {
                     @Parameter(name = "id", example = "1")
-            }
+            },
+            security = @SecurityRequirement(name = "Basic authorisation")
     )
     @ApiResponses({
             @ApiResponse(
@@ -144,6 +213,26 @@ public class HotelController {
             @ApiResponse(
                     description = "Returns status 400 and error message if request has invalid values.",
                     responseCode = "400",
+                    content = {
+                            @Content(
+                                    schema = @Schema(implementation = ErrorResponse.class),
+                                    mediaType = "application/json"
+                            )
+                    }
+            ),
+            @ApiResponse(
+                    description = "Returns status 401 and error message if user is not authorized.",
+                    responseCode = "401",
+                    content = {
+                            @Content(
+                                    schema = @Schema(implementation = ErrorResponse.class),
+                                    mediaType = "application/json"
+                            )
+                    }
+            ),
+            @ApiResponse(
+                    description = "Returns status 403 and error message if user has no required authorities.",
+                    responseCode = "403",
                     content = {
                             @Content(
                                     schema = @Schema(implementation = ErrorResponse.class),
@@ -173,15 +262,37 @@ public class HotelController {
 
     @Operation(
             summary = "Delete hotel by id",
-            description = "Delete hotel by id. Returns status 204.",
+            description = "Delete hotel by id. Returns status 204. " +
+                    "Requires any of the authorities: ['ADMIN'].",
             parameters = {
                     @Parameter(name = "id", example = "1")
-            }
+            },
+            security = @SecurityRequirement(name = "Basic authorisation")
     )
     @ApiResponses({
             @ApiResponse(
                     description = "Returns status 204 if everything completed successfully.",
                     responseCode = "204"
+            ),
+            @ApiResponse(
+                    description = "Returns status 401 and error message if user is not authorized.",
+                    responseCode = "401",
+                    content = {
+                            @Content(
+                                    schema = @Schema(implementation = ErrorResponse.class),
+                                    mediaType = "application/json"
+                            )
+                    }
+            ),
+            @ApiResponse(
+                    description = "Returns status 403 and error message if user has no required authorities.",
+                    responseCode = "403",
+                    content = {
+                            @Content(
+                                    schema = @Schema(implementation = ErrorResponse.class),
+                                    mediaType = "application/json"
+                            )
+                    }
             )
     })
     @DeleteMapping("/{id}")
