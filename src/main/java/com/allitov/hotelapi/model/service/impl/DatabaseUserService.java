@@ -8,6 +8,7 @@ import com.allitov.hotelapi.model.service.util.ServiceUtils;
 import jakarta.persistence.EntityExistsException;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.text.MessageFormat;
@@ -23,12 +24,12 @@ public class DatabaseUserService implements UserService {
      * Returns a user entity found by the specified username.
      * @param username a username by which to find the user entity.
      * @return a user entity found by username.
-     * @throws EntityNotFoundException if the user with the specified username was not found.
+     * @throws UsernameNotFoundException if the user with the specified username was not found.
      */
     @Override
     public User findByUsername(String username) {
         return userRepository.findByUsername(username).orElseThrow(
-                () -> new EntityNotFoundException(
+                () -> new UsernameNotFoundException(
                         MessageFormat.format(ExceptionMessage.USER_BY_USERNAME_NOT_FOUND, username))
         );
     }

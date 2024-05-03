@@ -9,6 +9,10 @@ import lombok.experimental.UtilityClass;
 @UtilityClass
 public class ExceptionMessage {
 
+    public final String AUTHENTICATION_FAILURE = "Authentication failure.";
+
+    public final String ACCESS_DENIED = "No required authorities.";
+
     public final String HOTEL_BY_ID_NOT_FOUND = "Hotel with id = ''{0}'' not found.";
 
     public final String HOTEL_BLANK_NAME = "Name must be specified.";
