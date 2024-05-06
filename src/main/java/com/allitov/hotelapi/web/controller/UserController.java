@@ -190,7 +190,7 @@ public class UserController {
     @Operation(
             summary = "Update user by id",
             description = "Update user by id. Returns status 204. " +
-                    "Requires any of the authorities: ['ADMIN'].",
+                    "Requires any of the authorities: ['ADMIN', 'USER'].",
             parameters = {
                     @Parameter(name = "id", example = "1")
             },
@@ -267,7 +267,7 @@ public class UserController {
     @Operation(
             summary = "Delete user by id",
             description = "Delete user by id. Returns status 204. " +
-                    "Requires any of the authorities: ['ADMIN'].",
+                    "Requires any of the authorities: ['ADMIN', 'USER'].",
             parameters = {
                     @Parameter(name = "id", example = "1")
             },
