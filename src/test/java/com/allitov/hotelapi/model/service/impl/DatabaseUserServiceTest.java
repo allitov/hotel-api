@@ -12,6 +12,8 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.List;
 import java.util.Optional;
@@ -27,6 +29,9 @@ public class DatabaseUserServiceTest {
 
     @Mock
     private UserRepository userRepository;
+
+    @Mock
+    private PasswordEncoder passwordEncoder;
 
     private User user;
 
@@ -63,7 +68,7 @@ public class DatabaseUserServiceTest {
         Mockito.when(userRepository.findByUsername(username))
                 .thenReturn(Optional.empty());
 
-        assertThrows(EntityNotFoundException.class, () -> userService.findByUsername(username));
+        assertThrows(UsernameNotFoundException.class, () -> userService.findByUsername(username));
 
         Mockito.verify(userRepository, Mockito.times(1))
                 .findByUsername(username);
@@ -117,6 +122,8 @@ public class DatabaseUserServiceTest {
                 .thenReturn(false);
         Mockito.when(userRepository.save(user))
                 .thenReturn(user);
+        Mockito.when(passwordEncoder.encode("password"))
+                .thenReturn("password");
 
         User createdUser = userService.create(user);
 
@@ -125,6 +132,8 @@ public class DatabaseUserServiceTest {
                 .existsByUsername(user.getUsername());
         Mockito.verify(userRepository, Mockito.times(1))
                 .save(user);
+        Mockito.verify(passwordEncoder, Mockito.times(1))
+                .encode("password");
     }
 
     @Test
