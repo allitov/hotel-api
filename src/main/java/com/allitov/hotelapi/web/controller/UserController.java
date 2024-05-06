@@ -1,6 +1,7 @@
 package com.allitov.hotelapi.web.controller;
 
 import com.allitov.hotelapi.model.service.UserService;
+import com.allitov.hotelapi.security.UserDetailsImpl;
 import com.allitov.hotelapi.web.dto.request.UserRequest;
 import com.allitov.hotelapi.web.dto.response.ErrorResponse;
 import com.allitov.hotelapi.web.dto.response.UserListResponse;
@@ -19,6 +20,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
@@ -254,6 +256,7 @@ public class UserController {
     })
     @PutMapping("/{id}")
     public ResponseEntity<Void> updateById(@PathVariable("id") Integer id,
+                                           @AuthenticationPrincipal UserDetailsImpl userDetails,
                                            @Valid @RequestBody UserRequest request) {
         log.info("Update by id request with id = '{}' and body = '{}'", id, request);
         userService.updateById(id, userMapper.requestToEntity(request));
@@ -297,7 +300,8 @@ public class UserController {
             )
     })
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteById(@PathVariable("id") Integer id) {
+    public ResponseEntity<Void> deleteById(@PathVariable("id") Integer id,
+                                           @AuthenticationPrincipal UserDetailsImpl userDetails) {
         log.info("Delete by id request with id = '{}'", id);
         userService.deleteById(id);
 

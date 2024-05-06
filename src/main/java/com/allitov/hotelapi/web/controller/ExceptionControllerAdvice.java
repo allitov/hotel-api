@@ -1,5 +1,6 @@
 package com.allitov.hotelapi.web.controller;
 
+import com.allitov.hotelapi.exception.IllegalDataAccessException;
 import com.allitov.hotelapi.web.dto.response.ErrorResponse;
 import jakarta.persistence.EntityExistsException;
 import jakarta.persistence.EntityNotFoundException;
@@ -74,6 +75,18 @@ public class ExceptionControllerAdvice {
         }
 
         return ResponseEntity.badRequest().body(new ErrorResponse(e.getMessage()));
+    }
+
+    /**
+     * Creates responses for <em>forbidden</em> exception types.
+     * @param e exception to handle.
+     * @return status 403 and response body.
+     */
+    @ExceptionHandler(IllegalDataAccessException.class)
+    public ResponseEntity<ErrorResponse> forbiddenHandler(Exception e) {
+        logExceptionHandling(e);
+
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(new ErrorResponse(e.getMessage()));
     }
 
     /**

@@ -1,6 +1,7 @@
 package com.allitov.hotelapi.security;
 
 import com.allitov.hotelapi.model.entity.User;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -13,6 +14,7 @@ import java.util.List;
  * Implementation of UserDetails.
  * @author allitov
  */
+@Getter
 @RequiredArgsConstructor
 public class UserDetailsImpl implements UserDetails {
 
