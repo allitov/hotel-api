@@ -13,7 +13,7 @@ public class ExceptionMessage {
 
     public final String ACCESS_DENIED = "No required authorities.";
 
-    public final String HOTEL_BY_ID_NOT_FOUND = "Hotel with id = ''{0}'' not found.";
+    public final String HOTEL_BY_ID_NOT_FOUND = "Hotel with id = ''{0,number,#}'' not found.";
 
     public final String HOTEL_BLANK_NAME = "Name must be specified.";
 

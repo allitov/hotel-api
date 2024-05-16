@@ -25,7 +25,9 @@ public class TestcontainersInitializer implements ApplicationContextInitializer<
         TestPropertyValues.of(
                 "spring.datasource.url=" + POSTGRES.getJdbcUrl(),
                 "spring.datasource.username=" + POSTGRES.getUsername(),
-                "spring.datasource.password=" + POSTGRES.getPassword()
+                "spring.datasource.password=" + POSTGRES.getPassword(),
+                "spring.sql.init.data-locations=classpath:db/test_data.sql",
+                "spring.sql.init.mode=always"
         ).applyTo(applicationContext.getEnvironment());
     }
 }
