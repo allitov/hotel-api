@@ -4,11 +4,11 @@ insert into hotel (name, description, city, address, distance_from_center, ratin
 insert into hotel (name, description, city, address, distance_from_center, rating, number_of_ratings) values ('Bogisich-Bayer', 'Ut at dolor quis odio consequat varius.', 'Xike', '6277 Oneill Place', 13.9, 2.18, 5);
 insert into hotel (name, description, city, address, distance_from_center, rating, number_of_ratings) values ('Hintz, Zemlak and Walsh', 'Duis consequat dui nec nisi volutpat eleifend.', 'Jiyukou', '5 Merrick Avenue', 62.0, 4.9, 168);
 
-insert into room (description, number, price, max_people, hotel_id) values ('Pellentesque ultrices mattis odio. Donec vitae nisi. Nam ultrices, libero non mattis pulvinar, nulla pede ullamcorper augue, a suscipit nulla elit ac nulla. Sed vel enim sit amet nunc viverra dapibus.', 79, 154.62, 1, 3);
-insert into room (description, number, price, max_people, hotel_id) values ('Curabitur at ipsum ac tellus semper interdum. Mauris ullamcorper purus sit amet nulla. Quisque arcu libero, rutrum ac, lobortis vel, dapibus at, diam. Nam tristique tortor eu pede.', 38, 6321.71, 10, 5);
-insert into room (description, number, price, max_people, hotel_id) values ('Quisque porta volutpat erat. Quisque erat eros, viverra eget, congue eget, semper rutrum, nulla.', 36, 4599.64, 8, 3);
+insert into room (description, number, price, max_people, hotel_id) values ('Pellentesque ultrices mattis odio.', 79, 154.62, 1, 3);
+insert into room (description, number, price, max_people, hotel_id) values ('Curabitur at ipsum ac tellus semper interdum.', 38, 6321.71, 10, 5);
+insert into room (description, number, price, max_people, hotel_id) values ('Quisque porta volutpat erat.', 36, 4599.64, 8, 3);
 insert into room (description, number, price, max_people, hotel_id) values ('Suspendisse potenti.', 23, 2908.3, 7, 1);
-insert into room (description, number, price, max_people, hotel_id) values ('Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Duis faucibus accumsan odio. Curabitur convallis. Duis consequat dui nec nisi volutpat eleifend. Donec ut dolor.', 59, 8933.39, 6, 4);
+insert into room (description, number, price, max_people, hotel_id) values ('Duis faucibus accumsan odio.', 59, 8933.39, 6, 4);
 
 insert into unavailable_dates (room_id, from_date, to_date) values (5, '2023-10-09', '2024-12-20');
 insert into unavailable_dates (room_id, from_date, to_date) values (4, '2023-03-27', '2024-05-26');
