@@ -1,0 +1,16 @@
+{
+  "users": [
+    {
+      "id": 1,
+      "username": "admin",
+      "email": "shanfrey0@google.ru",
+      "role": "ADMIN"
+    },
+    {
+      "id": 2,
+      "username": "user",
+      "email": "tgoodread1@spiegel.de",
+      "role": "USER"
+    }
+  ]
+}

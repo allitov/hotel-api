@@ -1,8 +1,8 @@
 package com.allitov.hotelapi.integration;
 
-import com.allitov.hotelapi.model.repository.RoomRepository;
-import com.allitov.hotelapi.model.service.RoomService;
-import com.allitov.hotelapi.web.dto.request.RoomRequest;
+import com.allitov.hotelapi.model.repository.UserRepository;
+import com.allitov.hotelapi.model.service.UserService;
+import com.allitov.hotelapi.web.dto.request.UserRequest;
 import com.allitov.testutils.TestUtils;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -10,7 +10,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.TestExecutionEvent;
 import org.springframework.security.test.context.support.WithAnonymousUser;
-import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.security.test.context.support.WithUserDetails;
 
 import static net.javacrumbs.jsonunit.JsonAssert.assertJsonEquals;
@@ -18,15 +17,15 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-public class RoomControllerIntegrationTest extends AbstractIntegrationTest {
+public class UserControllerIntegrationTest extends AbstractIntegrationTest{
 
-    private final String baseUri = "/api/v1/room";
-
-    @Autowired
-    private RoomRepository roomRepository;
+    private final String baseUri = "/api/v1/user";
 
     @Autowired
-    private RoomService roomService;
+    private UserRepository userRepository;
+
+    @Autowired
+    private UserService userService;
 
     @Test
     @DisplayName("Test findAll() role ADMIN status 200")
@@ -37,27 +36,7 @@ public class RoomControllerIntegrationTest extends AbstractIntegrationTest {
     )
     public void givenRoleAdmin_whenFindAll_thenRoomListResponse() throws Exception {
         String expectedResponse = TestUtils.readStringFromResource(
-                "response/room/room_list_response.json");
-
-        String actualResponse = mockMvc.perform(get(baseUri))
-                                    .andExpect(status().isOk())
-                                    .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                                    .andReturn()
-                                    .getResponse()
-                                    .getContentAsString();
-
-        assertJsonEquals(expectedResponse, actualResponse);
-    }
-
-    @Test
-    @DisplayName("Test findAll() role USER status 200")
-    @WithUserDetails(
-            userDetailsServiceBeanName = USER_DETAILS_SERVICE_BEAN_NAME,
-            setupBefore = TestExecutionEvent.TEST_METHOD
-    )
-    public void givenRoleUser_whenFindAll_thenRoomListResponse() throws Exception {
-        String expectedResponse = TestUtils.readStringFromResource(
-                "response/room/room_list_response.json");
+                "response/user/user_list_response.json");
 
         String actualResponse = mockMvc.perform(get(baseUri))
                                     .andExpect(status().isOk())
@@ -87,35 +66,17 @@ public class RoomControllerIntegrationTest extends AbstractIntegrationTest {
     }
 
     @Test
-    @DisplayName("Test findAll() role INVALID status 403")
-    @WithMockUser(username = "user", authorities = "INVALID")
-    public void givenRoleInvalid_whenFindAll_thenErrorResponse() throws Exception {
+    @DisplayName("Test findAll() role USER status 403")
+    @WithUserDetails(
+            userDetailsServiceBeanName = USER_DETAILS_SERVICE_BEAN_NAME,
+            setupBefore = TestExecutionEvent.TEST_METHOD
+    )
+    public void givenRoleUser_whenFindAll_thenErrorResponse() throws Exception {
         String expectedResponse = TestUtils.readStringFromResource(
                 "response/access_denied_response.json");
 
         String actualResponse = mockMvc.perform(get(baseUri))
                                     .andExpect(status().isForbidden())
-                                    .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                                    .andReturn()
-                                    .getResponse()
-                                    .getContentAsString();
-
-        assertJsonEquals(expectedResponse, actualResponse);
-    }
-
-    @Test
-    @DisplayName("Test findById() role USER status 200")
-    @WithUserDetails(
-            userDetailsServiceBeanName = USER_DETAILS_SERVICE_BEAN_NAME,
-            setupBefore = TestExecutionEvent.TEST_METHOD
-    )
-    public void givenIdAndRoleUser_whenFindById_thenRoomResponse() throws Exception {
-        Integer id = 3;
-        String expectedResponse = TestUtils.readStringFromResource(
-                "response/room/room_response.json");
-
-        String actualResponse = mockMvc.perform(get(baseUri + "/{id}", id))
-                                    .andExpect(status().isOk())
                                     .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                                     .andReturn()
                                     .getResponse()
@@ -131,10 +92,10 @@ public class RoomControllerIntegrationTest extends AbstractIntegrationTest {
             value = "admin",
             setupBefore = TestExecutionEvent.TEST_METHOD
     )
-    public void givenIdAndRoleAdmin_whenFindById_thenRoomResponse() throws Exception {
-        Integer id = 3;
+    public void givenIdAndRoleAdmin_whenFindById_thenUserResponse() throws Exception {
+        Integer id = 2;
         String expectedResponse = TestUtils.readStringFromResource(
-                "response/room/room_response.json");
+                "response/user/user_response.json");
 
         String actualResponse = mockMvc.perform(get(baseUri + "/{id}", id))
                                     .andExpect(status().isOk())
@@ -150,7 +111,7 @@ public class RoomControllerIntegrationTest extends AbstractIntegrationTest {
     @DisplayName("Test findById() role ANONYMOUS status 401")
     @WithAnonymousUser
     public void givenIdAndRoleAnonymous_whenFindById_thenErrorResponse() throws Exception {
-        Integer id = 3;
+        Integer id = 2;
         String expectedResponse = TestUtils.readStringFromResource(
                 "response/authentication_failure_response.json");
 
@@ -165,10 +126,13 @@ public class RoomControllerIntegrationTest extends AbstractIntegrationTest {
     }
 
     @Test
-    @DisplayName("Test findById() role INVALID status 403")
-    @WithMockUser(username = "user", authorities = "INVALID")
-    public void givenIdAndRoleInvalid_whenFindById_thenErrorResponse() throws Exception {
-        Integer id = 3;
+    @DisplayName("Test findById() role USER status 403")
+    @WithUserDetails(
+            userDetailsServiceBeanName = USER_DETAILS_SERVICE_BEAN_NAME,
+            setupBefore = TestExecutionEvent.TEST_METHOD
+    )
+    public void givenIdAndRoleUser_whenFindById_thenErrorResponse() throws Exception {
+        Integer id = 2;
         String expectedResponse = TestUtils.readStringFromResource(
                 "response/access_denied_response.json");
 
@@ -192,7 +156,7 @@ public class RoomControllerIntegrationTest extends AbstractIntegrationTest {
     public void givenNonexistentIdAndRoleAdmin_whenFindById_thenErrorResponse() throws Exception {
         Integer id = 1000;
         String expectedResponse = TestUtils.readStringFromResource(
-                "response/room/room_by_id_not_found_response.json");
+                "response/user/user_by_id_not_found_response.json");
 
         String actualResponse = mockMvc.perform(get(baseUri + "/{id}", id))
                                     .andExpect(status().isNotFound())
@@ -205,38 +169,30 @@ public class RoomControllerIntegrationTest extends AbstractIntegrationTest {
     }
 
     @Test
-    @DisplayName("Test create() role ADMIN status 201")
-    @WithUserDetails(
-            userDetailsServiceBeanName = USER_DETAILS_SERVICE_BEAN_NAME,
-            value = "admin",
-            setupBefore = TestExecutionEvent.TEST_METHOD
-    )
-    public void givenRoomRequestAndRoleAdmin_whenCreate_thenVoid() throws Exception {
-        RoomRequest request = createRoomRequest();
-        assertEquals(5, roomRepository.count());
+    @DisplayName("Test create() role ANONYMOUS status 201")
+    @WithAnonymousUser
+    public void givenUserRequestAndRoleAnonymous_whenCreate_thenVoid() throws Exception {
+        UserRequest request = createUserRequest();
+        assertEquals(2, userRepository.count());
 
         mockMvc.perform(post(baseUri)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isCreated())
-                .andExpect(header().string("Location", baseUri + "/6"));
+                .andExpect(header().string("Location", baseUri + "/3"));
 
-        assertEquals(6, roomRepository.count());
+        assertEquals(3, userRepository.count());
     }
 
     @Test
-    @DisplayName("Test create() role ADMIN status 400")
-    @WithUserDetails(
-            userDetailsServiceBeanName = USER_DETAILS_SERVICE_BEAN_NAME,
-            value = "admin",
-            setupBefore = TestExecutionEvent.TEST_METHOD
-    )
-    public void givenInvalidRoomRequestAndRoleAdmin_whenCreate_thenErrorResponse() throws Exception {
-        RoomRequest request = createRoomRequest();
-        request.setDescription(null);
+    @DisplayName("Test create() role ANONYMOUS status 400")
+    @WithAnonymousUser
+    public void givenInvalidUserRequestAndRoleAnonymous_whenCreate_thenErrorResponse() throws Exception {
+        UserRequest request = createUserRequest();
+        request.setUsername(null);
         String expectedResponse = TestUtils.readStringFromResource(
-                "response/room/room_request_blank_description_response.json");
-        assertEquals(5, roomRepository.count());
+                "response/user/user_request_blank_name_response.json");
+        assertEquals(2, userRepository.count());
 
         String actualResponse = mockMvc.perform(post(baseUri)
                                     .contentType(MediaType.APPLICATION_JSON)
@@ -248,81 +204,49 @@ public class RoomControllerIntegrationTest extends AbstractIntegrationTest {
                             .getContentAsString();
 
         assertJsonEquals(expectedResponse, actualResponse);
-        assertEquals(5, roomRepository.count());
+        assertEquals(2, userRepository.count());
     }
 
     @Test
-    @DisplayName("Test create() role ANONYMOUS status 401")
+    @DisplayName("Test create() role ANONYMOUS status 409")
     @WithAnonymousUser
-    public void givenRoomRequestAndRoleAnonymous_whenCreate_thenErrorResponse() throws Exception {
-        RoomRequest request = createRoomRequest();
+    public void givenExistingUserRequestUsernameAndRoleAnonymous_whenCreate_thenErrorResponse() throws Exception {
+        UserRequest request = createUserRequest();
+        request.setUsername("admin");
         String expectedResponse = TestUtils.readStringFromResource(
-                "response/authentication_failure_response.json");
-        assertEquals(5, roomRepository.count());
+                "response/user/user_username_already_exists_response.json");
+        assertEquals(2, userRepository.count());
 
         String actualResponse = mockMvc.perform(post(baseUri)
                                     .contentType(MediaType.APPLICATION_JSON)
                                     .content(objectMapper.writeValueAsString(request)))
-                            .andExpect(status().isUnauthorized())
+                            .andExpect(status().isConflict())
                             .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                             .andReturn()
                             .getResponse()
                             .getContentAsString();
 
         assertJsonEquals(expectedResponse, actualResponse);
-        assertEquals(5, roomRepository.count());
+        assertEquals(2, userRepository.count());
     }
 
     @Test
-    @DisplayName("Test create() role USER status 403")
+    @DisplayName("Test updateById() role USER status 204")
     @WithUserDetails(
             userDetailsServiceBeanName = USER_DETAILS_SERVICE_BEAN_NAME,
             setupBefore = TestExecutionEvent.TEST_METHOD
     )
-    public void givenRoomRequestAndRoleUser_whenCreate_thenErrorResponse() throws Exception {
-        RoomRequest request = createRoomRequest();
-        String expectedResponse = TestUtils.readStringFromResource(
-                "response/access_denied_response.json");
-        assertEquals(5, roomRepository.count());
+    public void givenIdAndUserRequestAndRoleUser_whenUpdateById_thenVoid() throws Exception {
+        Integer id = 2;
+        UserRequest request = createUserRequest();
+        assertEquals("user", userService.findById(id).getUsername());
 
-        String actualResponse = mockMvc.perform(post(baseUri)
-                                    .contentType(MediaType.APPLICATION_JSON)
-                                    .content(objectMapper.writeValueAsString(request)))
-                            .andExpect(status().isForbidden())
-                            .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                            .andReturn()
-                            .getResponse()
-                            .getContentAsString();
+        mockMvc.perform(put(baseUri + "/{id}", id)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(request)))
+                .andExpect(status().isNoContent());
 
-        assertJsonEquals(expectedResponse, actualResponse);
-        assertEquals(5, roomRepository.count());
-    }
-
-    @Test
-    @DisplayName("Test create() role ADMIN status 404")
-    @WithUserDetails(
-            userDetailsServiceBeanName = USER_DETAILS_SERVICE_BEAN_NAME,
-            value = "admin",
-            setupBefore = TestExecutionEvent.TEST_METHOD
-    )
-    public void givenNonexistentRoomRequestHotelIdAndRoleAdmin_whenCreate_thenErrorResponse() throws Exception {
-        RoomRequest request = createRoomRequest();
-        request.setHotelId(1000);
-        String expectedResponse = TestUtils.readStringFromResource(
-                "response/hotel/hotel_by_id_not_found_response.json");
-        assertEquals(5, roomRepository.count());
-
-        String actualResponse = mockMvc.perform(post(baseUri)
-                                .contentType(MediaType.APPLICATION_JSON)
-                                .content(objectMapper.writeValueAsString(request)))
-                        .andExpect(status().isNotFound())
-                        .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                        .andReturn()
-                        .getResponse()
-                        .getContentAsString();
-
-        assertJsonEquals(expectedResponse, actualResponse);
-        assertEquals(5, roomRepository.count());
+        assertEquals("new_user", userService.findById(id).getUsername());
     }
 
     @Test
@@ -332,17 +256,17 @@ public class RoomControllerIntegrationTest extends AbstractIntegrationTest {
             value = "admin",
             setupBefore = TestExecutionEvent.TEST_METHOD
     )
-    public void givenIdAndRoomRequestAndRoleAdmin_whenUpdateById_thenVoid() throws Exception {
-        Integer id = 3;
-        RoomRequest request = createRoomRequest();
-        assertEquals("Quisque porta volutpat erat.", roomService.findById(id).getDescription());
+    public void givenIdAndUserRequestAndRoleAdmin_whenUpdateById_thenVoid() throws Exception {
+        Integer id = 1;
+        UserRequest request = createUserRequest();
+        assertEquals("admin", userService.findById(id).getUsername());
 
         mockMvc.perform(put(baseUri + "/{id}", id)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isNoContent());
 
-        assertEquals("Cool description", roomService.findById(id).getDescription());
+        assertEquals("new_user", userService.findById(id).getUsername());
     }
 
     @Test
@@ -352,13 +276,13 @@ public class RoomControllerIntegrationTest extends AbstractIntegrationTest {
             value = "admin",
             setupBefore = TestExecutionEvent.TEST_METHOD
     )
-    public void givenIdAndInvalidRoomRequestAndRoleAdmin_whenUpdateById_thenErrorResponse() throws Exception {
-        Integer id = 3;
-        RoomRequest request = createRoomRequest();
-        request.setDescription(null);
+    public void givenIdAndInvalidUserRequestAndRoleAdmin_whenUpdateById_thenErrorResponse() throws Exception {
+        Integer id = 1;
+        UserRequest request = createUserRequest();
+        request.setUsername(null);
         String expectedResponse = TestUtils.readStringFromResource(
-                "response/room/room_request_blank_description_response.json");
-        assertEquals("Quisque porta volutpat erat.", roomService.findById(id).getDescription());
+                "response/user/user_request_blank_name_response.json");
+        assertEquals("admin", userService.findById(id).getUsername());
 
         String actualResponse = mockMvc.perform(put(baseUri + "/{id}", id)
                                     .contentType(MediaType.APPLICATION_JSON)
@@ -370,18 +294,18 @@ public class RoomControllerIntegrationTest extends AbstractIntegrationTest {
                             .getContentAsString();
 
         assertJsonEquals(expectedResponse, actualResponse);
-        assertEquals("Quisque porta volutpat erat.", roomService.findById(id).getDescription());
+        assertEquals("admin", userService.findById(id).getUsername());
     }
 
     @Test
     @DisplayName("Test updateById() role ANONYMOUS status 401")
     @WithAnonymousUser
-    public void givenIdAndRoomRequestAndRoleAnonymous_whenUpdateById_thenErrorResponse() throws Exception {
-        Integer id = 3;
-        RoomRequest request = createRoomRequest();
+    public void givenIdAndUserRequestAndRoleAnonymous_whenUpdateById_thenErrorResponse() throws Exception {
+        Integer id = 2;
+        UserRequest request = createUserRequest();
         String expectedResponse = TestUtils.readStringFromResource(
                 "response/authentication_failure_response.json");
-        assertEquals("Quisque porta volutpat erat.", roomService.findById(id).getDescription());
+        assertEquals("user", userService.findById(id).getUsername());
 
         String actualResponse = mockMvc.perform(put(baseUri + "/{id}", id)
                                     .contentType(MediaType.APPLICATION_JSON)
@@ -393,21 +317,22 @@ public class RoomControllerIntegrationTest extends AbstractIntegrationTest {
                             .getContentAsString();
 
         assertJsonEquals(expectedResponse, actualResponse);
-        assertEquals("Quisque porta volutpat erat.", roomService.findById(id).getDescription());
+        assertEquals("user", userService.findById(id).getUsername());
     }
 
     @Test
-    @DisplayName("Test updateById() role USER status 403")
+    @DisplayName("Test updateById() role ADMIN status 403")
     @WithUserDetails(
             userDetailsServiceBeanName = USER_DETAILS_SERVICE_BEAN_NAME,
+            value = "admin",
             setupBefore = TestExecutionEvent.TEST_METHOD
     )
-    public void givenIdAndRoomRequestAndRoleUser_whenUpdateById_thenErrorResponse() throws Exception {
-        Integer id = 3;
-        RoomRequest request = createRoomRequest();
-        String expectedResponse = TestUtils.readStringFromResource(
-                "response/access_denied_response.json");
-        assertEquals("Quisque porta volutpat erat.", roomService.findById(id).getDescription());
+    public void givenDifferentIdAndUserRequestAndRoleAdmin_whenUpdateById_thenErrorResponse() throws Exception {
+        Integer id = 2;
+        UserRequest request = createUserRequest();
+        String expectedResponse =
+                "{\"errorMessage\": \"User with id = '1' cannot get or change data of user with id = '2'\"}";
+        assertEquals("user", userService.findById(id).getUsername());
 
         String actualResponse = mockMvc.perform(put(baseUri + "/{id}", id)
                                     .contentType(MediaType.APPLICATION_JSON)
@@ -419,58 +344,77 @@ public class RoomControllerIntegrationTest extends AbstractIntegrationTest {
                             .getContentAsString();
 
         assertJsonEquals(expectedResponse, actualResponse);
-        assertEquals("Quisque porta volutpat erat.", roomService.findById(id).getDescription());
+        assertEquals("user", userService.findById(id).getUsername());
     }
 
     @Test
-    @DisplayName("Test updateById() role ADMIN status 404")
+    @DisplayName("Test updateById() role USER status 403")
+    @WithUserDetails(
+            userDetailsServiceBeanName = USER_DETAILS_SERVICE_BEAN_NAME,
+            setupBefore = TestExecutionEvent.TEST_METHOD
+    )
+    public void givenDifferentIdAndUserRequestAndRoleUser_whenUpdateById_thenErrorResponse() throws Exception {
+        Integer id = 1;
+        UserRequest request = createUserRequest();
+        String expectedResponse =
+                "{\"errorMessage\": \"User with id = '2' cannot get or change data of user with id = '1'\"}";
+        assertEquals("admin", userService.findById(id).getUsername());
+
+        String actualResponse = mockMvc.perform(put(baseUri + "/{id}", id)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(request)))
+                .andExpect(status().isForbidden())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andReturn()
+                .getResponse()
+                .getContentAsString();
+
+        assertJsonEquals(expectedResponse, actualResponse);
+        assertEquals("admin", userService.findById(id).getUsername());
+    }
+
+    @Test
+    @DisplayName("Test updateById() role ADMIN status 409")
     @WithUserDetails(
             userDetailsServiceBeanName = USER_DETAILS_SERVICE_BEAN_NAME,
             value = "admin",
             setupBefore = TestExecutionEvent.TEST_METHOD
     )
-    public void givenNonexistentIdAndRoomRequestAndRoleAdmin_whenUpdateById_thenErrorResponse() throws Exception {
-        Integer id = 1000;
-        RoomRequest request = createRoomRequest();
+    public void givenIdAndExistingUserRequestUsernameAndRoleAdmin_whenUpdateById_thenErrorResponse() throws Exception {
+        Integer id = 1;
+        UserRequest request = createUserRequest();
+        request.setUsername("admin");
         String expectedResponse = TestUtils.readStringFromResource(
-                "response/room/room_by_id_not_found_response.json");
+                "response/user/user_username_already_exists_response.json");
+        assertEquals("shanfrey0@google.ru", userService.findById(id).getEmail());
 
-        String actualResponse = mockMvc.perform(put(baseUri + "/{id}", id)
+        String actualResponse = mockMvc.perform(post(baseUri)
                                     .contentType(MediaType.APPLICATION_JSON)
                                     .content(objectMapper.writeValueAsString(request)))
-                            .andExpect(status().isNotFound())
+                            .andExpect(status().isConflict())
                             .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                             .andReturn()
                             .getResponse()
                             .getContentAsString();
 
         assertJsonEquals(expectedResponse, actualResponse);
+        assertEquals("shanfrey0@google.ru", userService.findById(id).getEmail());
     }
 
     @Test
-    @DisplayName("Test updateById() role ADMIN status 404")
+    @DisplayName("Test deleteById() role USER status 204")
     @WithUserDetails(
             userDetailsServiceBeanName = USER_DETAILS_SERVICE_BEAN_NAME,
-            value = "admin",
             setupBefore = TestExecutionEvent.TEST_METHOD
     )
-    public void givenIdAndNonexistentRoomRequestHotelIdAndRoleAdmin_whenUpdateById_thenErrorResponse() throws Exception {
-        Integer id = 3;
-        RoomRequest request = createRoomRequest();
-        request.setHotelId(1000);
-        String expectedResponse = TestUtils.readStringFromResource(
-                "response/hotel/hotel_by_id_not_found_response.json");
+    public void givenIdAndRoleUser_whenDeleteById_thenVoid() throws Exception {
+        Integer id = 2;
+        assertTrue(userRepository.existsById(id));
 
-        String actualResponse = mockMvc.perform(put(baseUri + "/{id}", id)
-                                    .contentType(MediaType.APPLICATION_JSON)
-                                    .content(objectMapper.writeValueAsString(request)))
-                            .andExpect(status().isNotFound())
-                            .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                            .andReturn()
-                            .getResponse()
-                            .getContentAsString();
+        mockMvc.perform(delete(baseUri + "/{id}", id))
+                .andExpect(status().isNoContent());
 
-        assertJsonEquals(expectedResponse, actualResponse);
+        assertFalse(userRepository.existsById(id));
     }
 
     @Test
@@ -481,23 +425,23 @@ public class RoomControllerIntegrationTest extends AbstractIntegrationTest {
             setupBefore = TestExecutionEvent.TEST_METHOD
     )
     public void givenIdAndRoleAdmin_whenDeleteById_thenVoid() throws Exception {
-        Integer id = 3;
-        assertTrue(roomRepository.existsById(id));
+        Integer id = 1;
+        assertTrue(userRepository.existsById(id));
 
         mockMvc.perform(delete(baseUri + "/{id}", id))
                 .andExpect(status().isNoContent());
 
-        assertFalse(roomRepository.existsById(id));
+        assertFalse(userRepository.existsById(id));
     }
 
     @Test
     @DisplayName("Test deleteById() role ANONYMOUS status 401")
     @WithAnonymousUser
     public void givenIdAndRoleAnonymous_whenDeleteById_thenErrorResponse() throws Exception {
-        Integer id = 3;
+        Integer id = 1;
         String expectedResponse = TestUtils.readStringFromResource(
                 "response/authentication_failure_response.json");
-        assertTrue(roomRepository.existsById(id));
+        assertTrue(userRepository.existsById(id));
 
         String actualResponse = mockMvc.perform(delete(baseUri + "/{id}", id))
                                     .andExpect(status().isUnauthorized())
@@ -507,7 +451,7 @@ public class RoomControllerIntegrationTest extends AbstractIntegrationTest {
                                     .getContentAsString();
 
         assertJsonEquals(expectedResponse, actualResponse);
-        assertTrue(roomRepository.existsById(id));
+        assertTrue(userRepository.existsById(id));
     }
 
     @Test
@@ -516,11 +460,11 @@ public class RoomControllerIntegrationTest extends AbstractIntegrationTest {
             userDetailsServiceBeanName = USER_DETAILS_SERVICE_BEAN_NAME,
             setupBefore = TestExecutionEvent.TEST_METHOD
     )
-    public void givenIdAndRoleUser_whenDeleteById_thenErrorResponse() throws Exception {
-        Integer id = 3;
-        String expectedResponse = TestUtils.readStringFromResource(
-                "response/access_denied_response.json");
-        assertTrue(roomRepository.existsById(id));
+    public void givenDifferentIdAndRoleUser_whenDeleteById_thenErrorResponse() throws Exception {
+        Integer id = 1;
+        String expectedResponse =
+                "{\"errorMessage\": \"User with id = '2' cannot get or change data of user with id = '1'\"}";
+        assertTrue(userRepository.existsById(id));
 
         String actualResponse = mockMvc.perform(delete(baseUri + "/{id}", id))
                                     .andExpect(status().isForbidden())
@@ -530,16 +474,39 @@ public class RoomControllerIntegrationTest extends AbstractIntegrationTest {
                                     .getContentAsString();
 
         assertJsonEquals(expectedResponse, actualResponse);
-        assertTrue(roomRepository.existsById(id));
+        assertTrue(userRepository.existsById(id));
     }
 
-    private RoomRequest createRoomRequest() {
-        return RoomRequest.builder()
-                .hotelId(1)
-                .description("Cool description")
-                .number((short) 10)
-                .price("100.15")
-                .maxPeople((short) 5)
+    @Test
+    @DisplayName("Test deleteById() role ADMIN status 403")
+    @WithUserDetails(
+            userDetailsServiceBeanName = USER_DETAILS_SERVICE_BEAN_NAME,
+            value = "admin",
+            setupBefore = TestExecutionEvent.TEST_METHOD
+    )
+    public void givenDifferentIdAndRoleAdmin_whenDeleteById_thenErrorResponse() throws Exception {
+        Integer id = 2;
+        String expectedResponse =
+                "{\"errorMessage\": \"User with id = '1' cannot get or change data of user with id = '2'\"}";
+        assertTrue(userRepository.existsById(id));
+
+        String actualResponse = mockMvc.perform(delete(baseUri + "/{id}", id))
+                                    .andExpect(status().isForbidden())
+                                    .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                                    .andReturn()
+                                    .getResponse()
+                                    .getContentAsString();
+
+        assertJsonEquals(expectedResponse, actualResponse);
+        assertTrue(userRepository.existsById(id));
+    }
+
+    private UserRequest createUserRequest() {
+        return UserRequest.builder()
+                .username("new_user")
+                .email("email@email.com")
+                .password("password")
+                .role("USER")
                 .build();
     }
 }

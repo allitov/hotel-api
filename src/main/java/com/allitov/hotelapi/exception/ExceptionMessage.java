@@ -51,13 +51,13 @@ public class ExceptionMessage {
 
     public final String ROOM_INVALID_MAX_PEOPLE = "Maximum number of people must be greater than zero.";
 
-    public final String USER_DATA_ILLEGAL_ACCESS = "User with id = ''{0}'' cannot get or change data of user with id = ''{1}''";
+    public final String USER_DATA_ILLEGAL_ACCESS = "User with id = ''{0,number,#}'' cannot get or change data of user with id = ''{1,number,#}''";
 
     public final String USER_BY_USERNAME_NOT_FOUND = "User with username = ''{0}'' not found.";
 
     public final String USER_ALREADY_EXISTS = "User with username = ''{0}'' already exists.";
 
-    public final String USER_BY_ID_NOT_FOUND = "User with id = ''{0}'' not found.";
+    public final String USER_BY_ID_NOT_FOUND = "User with id = ''{0,number,#}'' not found.";
 
     public final String USER_BLANK_USERNAME = "Username must be specified.";
 
