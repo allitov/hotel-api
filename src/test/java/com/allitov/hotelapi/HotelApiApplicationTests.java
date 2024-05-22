@@ -1,12 +1,9 @@
 package com.allitov.hotelapi;
 
-import com.allitov.testutils.EnableTestcontainers;
+import com.allitov.hotelapi.integration.AbstractIntegrationTest;
 import org.junit.jupiter.api.Test;
-import org.springframework.boot.test.context.SpringBootTest;
 
-@SpringBootTest
-@EnableTestcontainers
-class HotelApiApplicationTests {
+class HotelApiApplicationTests extends AbstractIntegrationTest {
 
     @Test
     void contextLoads() {
