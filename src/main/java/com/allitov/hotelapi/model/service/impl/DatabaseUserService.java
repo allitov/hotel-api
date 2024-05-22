@@ -8,6 +8,8 @@ import com.allitov.hotelapi.model.service.util.ServiceUtils;
 import jakarta.persistence.EntityExistsException;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.text.MessageFormat;
@@ -19,16 +21,18 @@ public class DatabaseUserService implements UserService {
 
     private final UserRepository userRepository;
 
+    private final PasswordEncoder passwordEncoder;
+
     /**
      * Returns a user entity found by the specified username.
      * @param username a username by which to find the user entity.
      * @return a user entity found by username.
-     * @throws EntityNotFoundException if the user with the specified username was not found.
+     * @throws UsernameNotFoundException if the user with the specified username was not found.
      */
     @Override
     public User findByUsername(String username) {
         return userRepository.findByUsername(username).orElseThrow(
-                () -> new EntityNotFoundException(
+                () -> new UsernameNotFoundException(
                         MessageFormat.format(ExceptionMessage.USER_BY_USERNAME_NOT_FOUND, username))
         );
     }
@@ -68,6 +72,7 @@ public class DatabaseUserService implements UserService {
             throw new EntityExistsException(MessageFormat.format(
                     ExceptionMessage.USER_ALREADY_EXISTS, user.getUsername()));
         }
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
 
         return userRepository.save(user);
     }

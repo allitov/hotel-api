@@ -1,0 +1,54 @@
+{
+  "hotels": [
+    {
+      "id": 1,
+      "name": "Sauer and Sons",
+      "description": "Quisque id justo sit amet sapien dignissim vestibulum.",
+      "city": "Sinegor'ye",
+      "address": "2575 Spohn Alley",
+      "distanceFromCenter": 10.7,
+      "rating": 3.09,
+      "numberOfRatings": 21
+    },
+    {
+      "id": 2,
+      "name": "Walter LLC",
+      "description": "Sed accumsan felis.",
+      "city": "Soukkouma",
+      "address": "977 Holy Cross Street",
+      "distanceFromCenter": 40.28,
+      "rating": 3.24,
+      "numberOfRatings": 18
+    },
+    {
+      "id": 3,
+      "name": "Lubowitz LLC",
+      "description": "Nunc nisl.",
+      "city": "Lindavista",
+      "address": "6 Meadow Vale Plaza",
+      "distanceFromCenter": 33.62,
+      "rating": 2.32,
+      "numberOfRatings": 35
+    },
+    {
+      "id": 4,
+      "name": "Bogisich-Bayer",
+      "description": "Ut at dolor quis odio consequat varius.",
+      "city": "Xike",
+      "address": "6277 Oneill Place",
+      "distanceFromCenter": 13.9,
+      "rating": 2.18,
+      "numberOfRatings": 5
+    },
+    {
+      "id": 5,
+      "name": "Hintz, Zemlak and Walsh",
+      "description": "Duis consequat dui nec nisi volutpat eleifend.",
+      "city": "Jiyukou",
+      "address": "5 Merrick Avenue",
+      "distanceFromCenter": 62.0,
+      "rating": 4.9,
+      "numberOfRatings": 168
+    }
+  ]
+}

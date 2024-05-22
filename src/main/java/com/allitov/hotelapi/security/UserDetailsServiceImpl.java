@@ -1,0 +1,24 @@
+package com.allitov.hotelapi.security;
+
+import com.allitov.hotelapi.model.service.UserService;
+import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.stereotype.Service;
+
+/**
+ * Implementation of UserDetailsService.
+ * @author allitov
+ */
+@Service
+@RequiredArgsConstructor
+public class UserDetailsServiceImpl implements UserDetailsService {
+
+    private final UserService userService;
+
+    @Override
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        return new UserDetailsImpl(userService.findByUsername(username));
+    }
+}

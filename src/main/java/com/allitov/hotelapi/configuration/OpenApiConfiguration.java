@@ -1,5 +1,7 @@
 package com.allitov.hotelapi.configuration;
 
+import io.swagger.v3.oas.annotations.enums.SecuritySchemeType;
+import io.swagger.v3.oas.annotations.security.SecurityScheme;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.info.Info;
 import io.swagger.v3.oas.models.servers.Server;
@@ -14,6 +16,11 @@ import java.util.List;
  * @author allitov
  */
 @Configuration
+@SecurityScheme(
+        type = SecuritySchemeType.HTTP,
+        name = "Basic authorisation",
+        scheme = "basic"
+)
 public class OpenApiConfiguration {
 
     @Value("${server.port}")

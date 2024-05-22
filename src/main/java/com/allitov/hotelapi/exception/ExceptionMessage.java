@@ -9,7 +9,11 @@ import lombok.experimental.UtilityClass;
 @UtilityClass
 public class ExceptionMessage {
 
-    public final String HOTEL_BY_ID_NOT_FOUND = "Hotel with id = ''{0}'' not found.";
+    public final String AUTHENTICATION_FAILURE = "Authentication failure.";
+
+    public final String ACCESS_DENIED = "No required authorities.";
+
+    public final String HOTEL_BY_ID_NOT_FOUND = "Hotel with id = ''{0,number,#}'' not found.";
 
     public final String HOTEL_BLANK_NAME = "Name must be specified.";
 
@@ -29,7 +33,7 @@ public class ExceptionMessage {
 
     public final String HOTEL_BLANK_DISTANCE_FROM_CENTER = "Distance from center must be specified.";
 
-    public final String ROOM_BY_ID_NOT_FOUND = "Room with id = ''{0}'' not found.";
+    public final String ROOM_BY_ID_NOT_FOUND = "Room with id = ''{0,number,#}'' not found.";
 
     public final String ROOM_NULL_HOTEL_ID = "Hotel id must be specified.";
 
@@ -47,11 +51,13 @@ public class ExceptionMessage {
 
     public final String ROOM_INVALID_MAX_PEOPLE = "Maximum number of people must be greater than zero.";
 
+    public final String USER_DATA_ILLEGAL_ACCESS = "User with id = ''{0,number,#}'' cannot get or change data of user with id = ''{1,number,#}''";
+
     public final String USER_BY_USERNAME_NOT_FOUND = "User with username = ''{0}'' not found.";
 
     public final String USER_ALREADY_EXISTS = "User with username = ''{0}'' already exists.";
 
-    public final String USER_BY_ID_NOT_FOUND = "User with id = ''{0}'' not found.";
+    public final String USER_BY_ID_NOT_FOUND = "User with id = ''{0,number,#}'' not found.";
 
     public final String USER_BLANK_USERNAME = "Username must be specified.";
 
