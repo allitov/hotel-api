@@ -224,6 +224,70 @@ public class HotelControllerTest {
                 .deleteById(id);
     }
 
+    @Test
+    @DisplayName("Test updateRatingById() status 200")
+    public void givenIdAndRating_whenUpdateRatingById_thenHotel() throws Exception {
+        Integer id = 1;
+        Integer newMark = 5;
+        Hotel hotel = new Hotel();
+        HotelResponse response = creteHotelResponse();
+        Mockito.when(hotelService.updateRatingById(id, newMark))
+                .thenReturn(hotel);
+        Mockito.when(hotelMapper.entityToResponse(hotel))
+                .thenReturn(response);
+
+        mockMvc.perform(patch(baseUri + "/{id}?newMark={newMark}", id, newMark))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(content().json("{'id': 1, " +
+                        "'name': 'name', " +
+                        "'description': 'description', " +
+                        "'city': 'city', " +
+                        "'address': 'address', " +
+                        "'distanceFromCenter': 1.5, " +
+                        "'rating': 4.5, " +
+                        "'numberOfRatings': 200}"));
+
+        Mockito.verify(hotelService, Mockito.times(1))
+                .updateRatingById(id, newMark);
+        Mockito.verify(hotelMapper, Mockito.times(1))
+                .entityToResponse(hotel);
+    }
+
+    @Test
+    @DisplayName("Test updateRatingById() status 400")
+    public void givenIdAndIllegalRating_whenUpdateRatingById_thenErrorResponse() throws Exception {
+        Integer id = 1;
+        Integer newMark = 10;
+        Mockito.when(hotelService.updateRatingById(id, newMark))
+                .thenThrow(new IllegalArgumentException("Illegal rating"));
+
+        mockMvc.perform(patch(baseUri + "/{id}?newMark={newMark}", id, newMark))
+                .andExpect(status().isBadRequest())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(content().json("{'errorMessage': 'Illegal rating'}"));
+
+        Mockito.verify(hotelService, Mockito.times(1))
+                .updateRatingById(id, newMark);
+    }
+
+    @Test
+    @DisplayName("Test updateRatingById() status 404")
+    public void givenNonexistentIdAndRating_whenUpdateRatingById_thenErrorResponse() throws Exception {
+        Integer id = 10;
+        Integer newMark = 5;
+        Mockito.when(hotelService.updateRatingById(id, newMark))
+                .thenThrow(new EntityNotFoundException("Entity not found."));
+
+        mockMvc.perform(patch(baseUri + "/{id}?newMark={newMark}", id, newMark))
+                .andExpect(status().isNotFound())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(content().json("{'errorMessage': 'Entity not found.'}"));
+
+        Mockito.verify(hotelService, Mockito.times(1))
+                .updateRatingById(id, newMark);
+    }
+
     // validation tests
 
     @ParameterizedTest

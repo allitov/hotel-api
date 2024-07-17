@@ -480,6 +480,121 @@ public class HotelControllerIntegrationTest extends AbstractIntegrationTest {
         assertTrue(hotelRepository.existsById(id));
     }
 
+    @Test
+    @DisplayName("Test updateRatingById() status 200")
+    @WithUserDetails(
+            userDetailsServiceBeanName = USER_DETAILS_SERVICE_BEAN_NAME,
+            setupBefore = TestExecutionEvent.TEST_METHOD
+    )
+    public void givenIdAndRatingAndRoleUser_whenUpdateRatingById_thenHotel() throws Exception {
+        Integer id = 3;
+        Integer newMark = 5;
+
+        mockMvc.perform(patch(baseUri + "/{id}?newMark={newMark}", id, newMark))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON));
+    }
+
+    @Test
+    @DisplayName("Test updateRatingById() status 200")
+    @WithUserDetails(
+            userDetailsServiceBeanName = USER_DETAILS_SERVICE_BEAN_NAME,
+            value = "admin",
+            setupBefore = TestExecutionEvent.TEST_METHOD
+    )
+    public void givenIdAndRatingAndRoleAdmin_whenUpdateRatingById_thenHotel() throws Exception {
+        Integer id = 3;
+        Integer newMark = 5;
+
+        mockMvc.perform(patch(baseUri + "/{id}?newMark={newMark}", id, newMark))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON));
+    }
+
+    @Test
+    @DisplayName("Test updateRatingById() status 400")
+    @WithUserDetails(
+            userDetailsServiceBeanName = USER_DETAILS_SERVICE_BEAN_NAME,
+            value = "admin",
+            setupBefore = TestExecutionEvent.TEST_METHOD
+    )
+    public void givenIdAndInvalidRatingAndRoleAdmin_whenUpdateRatingById_thenErrorResponse() throws Exception {
+        Integer id = 3;
+        Integer newMark = 10;
+        String expectedResponse = TestUtils.readStringFromResource(
+                "response/hotel/hotel_illegal_rating_response.json");
+
+        String actualResponse = mockMvc.perform(patch(baseUri + "/{id}?newMark={newMark}", id, newMark))
+                            .andExpect(status().isBadRequest())
+                            .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                            .andReturn()
+                            .getResponse()
+                            .getContentAsString();
+
+        assertJsonEquals(expectedResponse, actualResponse);
+    }
+
+    @Test
+    @DisplayName("Test updateRatingById() status 401")
+    @WithAnonymousUser
+    public void givenIdAndRatingAndRoleAnonymous_whenUpdateRatingById_thenErrorResponse() throws Exception {
+        Integer id = 3;
+        Integer newMark = 5;
+        String expectedResponse = TestUtils.readStringFromResource(
+                "response/authentication_failure_response.json");
+
+        String actualResponse = mockMvc.perform(patch(baseUri + "/{id}?newMark={newMark}", id, newMark))
+                            .andExpect(status().isUnauthorized())
+                            .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                            .andReturn()
+                            .getResponse()
+                            .getContentAsString();
+
+        assertJsonEquals(expectedResponse, actualResponse);
+    }
+
+    @Test
+    @DisplayName("Test updateRatingById() status 403")
+    @WithMockUser(username = "user", authorities = "INVALID")
+    public void givenIdAndRatingAndRoleInvalid_whenUpdateRatingById_thenErrorResponse() throws Exception {
+        Integer id = 3;
+        Integer newMark = 5;
+        String expectedResponse = TestUtils.readStringFromResource(
+                "response/access_denied_response.json");
+
+        String actualResponse = mockMvc.perform(patch(baseUri + "/{id}?newMark={newMark}", id, newMark))
+                            .andExpect(status().isForbidden())
+                            .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                            .andReturn()
+                            .getResponse()
+                            .getContentAsString();
+
+        assertJsonEquals(expectedResponse, actualResponse);
+    }
+
+    @Test
+    @DisplayName("Test updateRatingById() status 404")
+    @WithUserDetails(
+            userDetailsServiceBeanName = USER_DETAILS_SERVICE_BEAN_NAME,
+            value = "admin",
+            setupBefore = TestExecutionEvent.TEST_METHOD
+    )
+    public void givenNonexistentIdAndRatingAndRoleAdmin_whenUpdateRatingById_thenErrorResponse() throws Exception {
+        Integer id = 1000;
+        Integer newMark = 5;
+        String expectedResponse = TestUtils.readStringFromResource(
+                "response/hotel/hotel_by_id_not_found_response.json");
+
+        String actualResponse = mockMvc.perform(patch(baseUri + "/{id}?newMark={newMark}", id, newMark))
+                            .andExpect(status().isNotFound())
+                            .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                            .andReturn()
+                            .getResponse()
+                            .getContentAsString();
+
+        assertJsonEquals(expectedResponse, actualResponse);
+    }
+
     private HotelRequest createHotelRequest() {
         return HotelRequest.builder()
                 .name("Hotel Name")

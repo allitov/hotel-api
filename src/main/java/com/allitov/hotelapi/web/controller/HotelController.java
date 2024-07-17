@@ -302,4 +302,68 @@ public class HotelController {
 
         return ResponseEntity.noContent().build();
     }
+
+    @Operation(
+            summary = "Update hotel rating",
+            description = "Update hotel rating. Returns a requested hotel with updated rating. " +
+                    "Requires any of the authorities: ['ADMIN', 'USER'].",
+            parameters = {
+                    @Parameter(name = "id", example = "1"),
+                    @Parameter(name = "newMark", example = "5")
+            },
+            security = @SecurityRequirement(name = "Basic authorisation")
+    )
+    @ApiResponses({
+            @ApiResponse(
+                    description = "Returns status 200 if everything completed successfully.",
+                    responseCode = "200"
+            ),
+            @ApiResponse(
+                    description = "Returns status 400 and error message if request has invalid values.",
+                    responseCode = "400",
+                    content = {
+                            @Content(
+                                    schema = @Schema(implementation = ErrorResponse.class),
+                                    mediaType = "application/json"
+                            )
+                    }
+            ),
+            @ApiResponse(
+                    description = "Returns status 401 and error message if user is not authorized.",
+                    responseCode = "401",
+                    content = {
+                            @Content(
+                                    schema = @Schema(implementation = ErrorResponse.class),
+                                    mediaType = "application/json"
+                            )
+                    }
+            ),
+            @ApiResponse(
+                    description = "Returns status 403 and error message if user has no required authorities.",
+                    responseCode = "403",
+                    content = {
+                            @Content(
+                                    schema = @Schema(implementation = ErrorResponse.class),
+                                    mediaType = "application/json"
+                            )
+                    }
+            ),
+            @ApiResponse(
+                    description = "Returns status 404 and error message if hotel with requested id was not found.",
+                    responseCode = "404",
+                    content = {
+                            @Content(
+                                    schema = @Schema(implementation = ErrorResponse.class),
+                                    mediaType = "application/json"
+                            )
+                    }
+            )
+    })
+    @PatchMapping("/{id}")
+    public ResponseEntity<HotelResponse> updateRatingById(@PathVariable("id") Integer id,
+                                                          @RequestParam("newMark") Integer newMark) {
+        log.info("Update rating by id request with id = '{}' and mark = '{}'", id, newMark);
+
+        return ResponseEntity.ok(hotelMapper.entityToResponse(hotelService.updateRatingById(id, newMark)));
+    }
 }

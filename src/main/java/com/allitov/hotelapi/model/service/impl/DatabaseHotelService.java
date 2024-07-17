@@ -82,4 +82,35 @@ public class DatabaseHotelService implements HotelService {
     public void deleteById(Integer id) {
         hotelRepository.deleteById(id);
     }
+
+    /**
+     * Updates rating of the specified hotel entity.
+     * @param id an id by which to find the hotel entity.
+     * @param newMark a new mark to be added.
+     * @return an updated hotel entity.
+     */
+    @Override
+    public Hotel updateRatingById(Integer id, Integer newMark) {
+        if (newMark < 1 || newMark > 5) {
+            throw new IllegalArgumentException(ExceptionMessage.HOTEL_ILLEGAL_RATING);
+        }
+
+        Hotel foundHotel = findById(id);
+        foundHotel.setRating(calculateRating(foundHotel, newMark));
+        foundHotel.setNumberOfRatings(foundHotel.getNumberOfRatings() + 1);
+
+        return hotelRepository.save(foundHotel);
+    }
+
+    private float calculateRating(Hotel hotel, int newMark) {
+        float rating = hotel.getRating();
+        int numberOfRatings = hotel.getNumberOfRatings();
+        float totalRating = rating * numberOfRatings;
+        totalRating = totalRating - rating + newMark;
+        rating = totalRating / numberOfRatings;
+
+        int scale = 10;
+
+        return (float) Math.round(rating * scale) / scale;
+    }
 }

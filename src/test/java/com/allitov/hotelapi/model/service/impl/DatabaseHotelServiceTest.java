@@ -38,8 +38,8 @@ public class DatabaseHotelServiceTest {
                 .city("city")
                 .address("address")
                 .distanceFromCenter(4.5F)
-                .rating(4.9F)
-                .numberOfRatings(10)
+                .rating(5F)
+                .numberOfRatings(1)
                 .build();
     }
 
@@ -140,5 +140,39 @@ public class DatabaseHotelServiceTest {
 
         Mockito.verify(hotelRepository, Mockito.times(1))
                 .deleteById(id);
+    }
+
+    @Test
+    @DisplayName("Test updateRatingById()")
+    public void givenIdAndRating_whenUpdateRatingById_thenHotel() {
+        Integer id = 1;
+        Integer newMark = 2;
+        Mockito.when(hotelRepository.findById(id))
+                .thenReturn(Optional.of(hotel));
+        Mockito.when(hotelRepository.save(hotel))
+                .thenReturn(hotel);
+
+        hotelService.updateRatingById(id, newMark);
+
+        assertEquals(2.0F, hotel.getRating());
+        assertEquals(2, hotel.getNumberOfRatings());
+        Mockito.verify(hotelRepository, Mockito.times(1))
+                .findById(id);
+        Mockito.verify(hotelRepository, Mockito.times(1))
+                .save(hotel);
+    }
+
+    @Test
+    @DisplayName("Test updateRatingById() IllegalArgumentException")
+    public void givenIdAndIllegalRating_whenUpdateRatingById_thenException() {
+        Integer id = 1;
+        Integer newMark = 6;
+
+        assertThrows(IllegalArgumentException.class, () -> hotelService.updateRatingById(id, newMark));
+
+        Mockito.verify(hotelRepository, Mockito.times(0))
+                .findById(id);
+        Mockito.verify(hotelRepository, Mockito.times(0))
+                .save(hotel);
     }
 }
