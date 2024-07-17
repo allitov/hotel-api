@@ -1,0 +1,3 @@
+{
+  "errorMessage": "Rating must be in range of [1, 5]."
+}
