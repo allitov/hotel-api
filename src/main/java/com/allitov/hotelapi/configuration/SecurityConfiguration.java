@@ -63,6 +63,8 @@ public class SecurityConfiguration {
                             .hasAnyAuthority(User.RoleType.USER.name(), User.RoleType.ADMIN.name())
                         .requestMatchers(HttpMethod.GET, "/api/v1/hotel/**", "/api/v1/room/**")
                             .hasAnyAuthority(User.RoleType.USER.name(), User.RoleType.ADMIN.name())
+                        .requestMatchers(HttpMethod.PATCH, "/api/v1/hotel/**")
+                            .hasAnyAuthority(User.RoleType.USER.name(), User.RoleType.ADMIN.name())
                         .requestMatchers(HttpMethod.POST, "/api/v1/booking")
                             .hasAnyAuthority(User.RoleType.USER.name(), User.RoleType.ADMIN.name())
                         .anyRequest()

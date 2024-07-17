@@ -60,7 +60,8 @@ public class ExceptionControllerAdvice {
             MethodArgumentNotValidException.class,
             MethodArgumentTypeMismatchException.class,
             HttpMessageNotReadableException.class,
-            DateTimeException.class
+            DateTimeException.class,
+            IllegalArgumentException.class,
     })
     public ResponseEntity<ErrorResponse> badRequestHandler(Exception e) {
         logExceptionHandling(e);

@@ -302,4 +302,12 @@ public class HotelController {
 
         return ResponseEntity.noContent().build();
     }
+
+    @PatchMapping("/{id}")
+    public ResponseEntity<HotelResponse> updateRatingById(@PathVariable("id") Integer id,
+                                                          @RequestParam("newMark") Integer newMark) {
+        log.info("Update rating by id request with id = '{}' and mark = '{}'", id, newMark);
+
+        return ResponseEntity.ok(hotelMapper.entityToResponse(hotelService.updateRatingById(id, newMark)));
+    }
 }
