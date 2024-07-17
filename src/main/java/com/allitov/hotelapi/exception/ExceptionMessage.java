@@ -33,6 +33,8 @@ public class ExceptionMessage {
 
     public final String HOTEL_BLANK_DISTANCE_FROM_CENTER = "Distance from center must be specified.";
 
+    public final String HOTEL_ILLEGAL_RATING = "Rating must be in range of [1, 5]";
+
     public final String ROOM_BY_ID_NOT_FOUND = "Room with id = ''{0,number,#}'' not found.";
 
     public final String ROOM_NULL_HOTEL_ID = "Hotel id must be specified.";
