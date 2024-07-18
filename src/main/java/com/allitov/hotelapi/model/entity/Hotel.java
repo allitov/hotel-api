@@ -2,6 +2,7 @@ package com.allitov.hotelapi.model.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
+import lombok.experimental.FieldNameConstants;
 
 /**
  * The class that represents an entity of a hotel.
@@ -11,6 +12,7 @@ import lombok.*;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
+@FieldNameConstants
 @Entity
 @Table(name = "hotel")
 public class Hotel {
