@@ -639,7 +639,29 @@ public class HotelControllerIntegrationTest extends AbstractIntegrationTest {
     }
 
     @Test
-    @DisplayName("Test updateRatingById() status 401")
+    @DisplayName("Test filterBy() status 400")
+    @WithUserDetails(
+            userDetailsServiceBeanName = USER_DETAILS_SERVICE_BEAN_NAME,
+            value = "admin",
+            setupBefore = TestExecutionEvent.TEST_METHOD
+    )
+    public void givenFilterAndRoleAdmin_whenFilterBy_thenErrorResponse() throws Exception {
+        Integer pageSize = 10;
+        String expectedResponse = TestUtils.readStringFromResource(
+                "response/filter_invalid_pagination_response.json");
+
+        String actualResponse = mockMvc.perform(get(baseUri + "/filter?pageSize={pageSize}", pageSize))
+                            .andExpect(status().isBadRequest())
+                            .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                            .andReturn()
+                            .getResponse()
+                            .getContentAsString();
+
+        assertJsonEquals(expectedResponse, actualResponse);
+    }
+
+    @Test
+    @DisplayName("Test filterBy() status 401")
     @WithAnonymousUser
     public void givenFilterAndRoleAnonymous_whenFilterBy_thenErrorResponse() throws Exception {
         String hotelName = "Lubowitz LLC";
@@ -657,7 +679,7 @@ public class HotelControllerIntegrationTest extends AbstractIntegrationTest {
     }
 
     @Test
-    @DisplayName("Test updateRatingById() status 403")
+    @DisplayName("Test filterBy() status 403")
     @WithMockUser(username = "user", authorities = "INVALID")
     public void givenFilterAndRoleInvalid_whenFilterBy_thenErrorResponse() throws Exception {
         String hotelName = "Lubowitz LLC";
