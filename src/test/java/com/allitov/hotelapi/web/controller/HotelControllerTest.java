@@ -2,8 +2,10 @@ package com.allitov.hotelapi.web.controller;
 
 import com.allitov.hotelapi.model.entity.Hotel;
 import com.allitov.hotelapi.model.service.HotelService;
+import com.allitov.hotelapi.web.dto.filter.HotelFilter;
 import com.allitov.hotelapi.web.dto.request.HotelRequest;
 import com.allitov.hotelapi.web.dto.response.HotelListResponse;
+import com.allitov.hotelapi.web.dto.response.HotelListWithCounterResponse;
 import com.allitov.hotelapi.web.dto.response.HotelResponse;
 import com.allitov.hotelapi.web.mapping.HotelMapper;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -286,6 +288,28 @@ public class HotelControllerTest {
 
         Mockito.verify(hotelService, Mockito.times(1))
                 .updateRatingById(id, newMark);
+    }
+
+    @Test
+    @DisplayName("Test filterBy() status 200")
+    public void givenFilter_whenFilterBy_thenHotelListWithCounter() throws Exception {
+        HotelFilter filter = new HotelFilter();
+        filter.setName("name");
+        List<Hotel> foundHotels = Collections.emptyList();
+        Mockito.when(hotelService.filterBy(filter))
+                .thenReturn(foundHotels);
+        Mockito.when(hotelMapper.entityListToListWithCounterResponse(foundHotels))
+                .thenReturn(new HotelListWithCounterResponse(Collections.emptyList(), 0));
+
+        mockMvc.perform(get(baseUri + "/filter?name={name}", filter.getName()))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(content().json("{'hotels': [], 'count': 0}"));
+
+        Mockito.verify(hotelService, Mockito.times(1))
+                .filterBy(filter);
+        Mockito.verify(hotelMapper, Mockito.times(1))
+                .entityListToListWithCounterResponse(foundHotels);
     }
 
     // validation tests

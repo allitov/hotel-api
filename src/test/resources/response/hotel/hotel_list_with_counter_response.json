@@ -1,0 +1,15 @@
+{
+  "hotels": [
+    {
+      "id": 3,
+      "name": "Lubowitz LLC",
+      "description": "Nunc nisl.",
+      "city": "Lindavista",
+      "address": "6 Meadow Vale Plaza",
+      "distanceFromCenter": 33.62,
+      "rating": 2.32,
+      "numberOfRatings": 35
+    }
+  ],
+  "count": 1
+}

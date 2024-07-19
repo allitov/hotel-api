@@ -481,7 +481,7 @@ public class HotelControllerIntegrationTest extends AbstractIntegrationTest {
     }
 
     @Test
-    @DisplayName("Test updateRatingById() status 200")
+    @DisplayName("Test updateRatingById() status 200 role USER")
     @WithUserDetails(
             userDetailsServiceBeanName = USER_DETAILS_SERVICE_BEAN_NAME,
             setupBefore = TestExecutionEvent.TEST_METHOD
@@ -496,7 +496,7 @@ public class HotelControllerIntegrationTest extends AbstractIntegrationTest {
     }
 
     @Test
-    @DisplayName("Test updateRatingById() status 200")
+    @DisplayName("Test updateRatingById() status 200 role ADMIN")
     @WithUserDetails(
             userDetailsServiceBeanName = USER_DETAILS_SERVICE_BEAN_NAME,
             value = "admin",
@@ -587,6 +587,85 @@ public class HotelControllerIntegrationTest extends AbstractIntegrationTest {
 
         String actualResponse = mockMvc.perform(patch(baseUri + "/{id}?newMark={newMark}", id, newMark))
                             .andExpect(status().isNotFound())
+                            .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                            .andReturn()
+                            .getResponse()
+                            .getContentAsString();
+
+        assertJsonEquals(expectedResponse, actualResponse);
+    }
+
+    @Test
+    @DisplayName("Test filterBy() status 200 role USER")
+    @WithUserDetails(
+            userDetailsServiceBeanName = USER_DETAILS_SERVICE_BEAN_NAME,
+            setupBefore = TestExecutionEvent.TEST_METHOD
+    )
+    public void givenFilterAndRoleUser_whenFilterBy_thenHotelListWithCounterResponse() throws Exception {
+        String hotelName = "Lubowitz LLC";
+        String expectedResponse = TestUtils.readStringFromResource(
+                "response/hotel/hotel_list_with_counter_response.json");
+
+        String actualResponse = mockMvc.perform(get(baseUri + "/filter?name={name}", hotelName))
+                            .andExpect(status().isOk())
+                            .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                            .andReturn()
+                            .getResponse()
+                            .getContentAsString();
+
+        assertJsonEquals(expectedResponse, actualResponse);
+    }
+
+    @Test
+    @DisplayName("Test filterBy() status 200 role ADMIN")
+    @WithUserDetails(
+            userDetailsServiceBeanName = USER_DETAILS_SERVICE_BEAN_NAME,
+            value = "admin",
+            setupBefore = TestExecutionEvent.TEST_METHOD
+    )
+    public void givenFilterAndRoleAdmin_whenFilterBy_thenHotelListWithCounterResponse() throws Exception {
+        String hotelName = "Lubowitz LLC";
+        String expectedResponse = TestUtils.readStringFromResource(
+                "response/hotel/hotel_list_with_counter_response.json");
+
+        String actualResponse = mockMvc.perform(get(baseUri + "/filter?name={name}", hotelName))
+                            .andExpect(status().isOk())
+                            .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                            .andReturn()
+                            .getResponse()
+                            .getContentAsString();
+
+        assertJsonEquals(expectedResponse, actualResponse);
+    }
+
+    @Test
+    @DisplayName("Test updateRatingById() status 401")
+    @WithAnonymousUser
+    public void givenFilterAndRoleAnonymous_whenFilterBy_thenErrorResponse() throws Exception {
+        String hotelName = "Lubowitz LLC";
+        String expectedResponse = TestUtils.readStringFromResource(
+                "response/authentication_failure_response.json");
+
+        String actualResponse = mockMvc.perform(get(baseUri + "/filter?name={name}", hotelName))
+                            .andExpect(status().isUnauthorized())
+                            .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                            .andReturn()
+                            .getResponse()
+                            .getContentAsString();
+
+        assertJsonEquals(expectedResponse, actualResponse);
+    }
+
+    @Test
+    @DisplayName("Test updateRatingById() status 403")
+    @WithMockUser(username = "user", authorities = "INVALID")
+    public void givenFilterAndRoleInvalid_whenFilterBy_thenErrorResponse() throws Exception {
+        String hotelName = "Lubowitz LLC";
+        String expectedResponse = TestUtils.readStringFromResource(
+                "response/access_denied_response.json");
+
+        String actualResponse = mockMvc.perform(get(baseUri + "/filter?name={name}", hotelName))
+                            .andExpect(status().isForbidden())
                             .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                             .andReturn()
                             .getResponse()
