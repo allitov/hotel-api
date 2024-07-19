@@ -1,9 +1,11 @@
 package com.allitov.hotelapi.web.controller;
 
 import com.allitov.hotelapi.model.service.HotelService;
+import com.allitov.hotelapi.web.dto.filter.HotelFilter;
 import com.allitov.hotelapi.web.dto.request.HotelRequest;
 import com.allitov.hotelapi.web.dto.response.ErrorResponse;
 import com.allitov.hotelapi.web.dto.response.HotelListResponse;
+import com.allitov.hotelapi.web.dto.response.HotelListWithCounterResponse;
 import com.allitov.hotelapi.web.dto.response.HotelResponse;
 import com.allitov.hotelapi.web.mapping.HotelMapper;
 import io.swagger.v3.oas.annotations.Operation;
@@ -81,6 +83,13 @@ public class HotelController {
         log.info("Find all request");
 
         return ResponseEntity.ok(hotelMapper.entityListToListResponse(hotelService.findAll()));
+    }
+
+    @GetMapping("/filter")
+    public ResponseEntity<HotelListWithCounterResponse> filterBy(HotelFilter filter) {
+        log.info("Filter by request with filter: '{}'", filter);
+
+        return ResponseEntity.ok(hotelMapper.entityListToListWithCounterResponse(hotelService.filterBy(filter)));
     }
 
     @Operation(
