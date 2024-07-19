@@ -85,6 +85,45 @@ public class HotelController {
         return ResponseEntity.ok(hotelMapper.entityListToListResponse(hotelService.findAll()));
     }
 
+    @Operation(
+            summary = "Get hotels by filter",
+            description = "Get hotels by filter. Returns a list of hotels with counter. " +
+                    "Requires any of the authorities: ['ADMIN', 'USER'].",
+            security = @SecurityRequirement(name = "Basic authorisation")
+    )
+    @ApiResponses({
+            @ApiResponse(
+                    description = "Returns status 200 and list of hotels with counter " +
+                            "if everything completed successfully.",
+                    responseCode = "200",
+                    content = {
+                            @Content(
+                                    schema = @Schema(implementation = HotelListWithCounterResponse.class),
+                                    mediaType = "application/json"
+                            )
+                    }
+            ),
+            @ApiResponse(
+                    description = "Returns status 401 and error message if user is not authorized.",
+                    responseCode = "401",
+                    content = {
+                            @Content(
+                                    schema = @Schema(implementation = ErrorResponse.class),
+                                    mediaType = "application/json"
+                            )
+                    }
+            ),
+            @ApiResponse(
+                    description = "Returns status 403 and error message if user has no required authorities.",
+                    responseCode = "403",
+                    content = {
+                            @Content(
+                                    schema = @Schema(implementation = ErrorResponse.class),
+                                    mediaType = "application/json"
+                            )
+                    }
+            ),
+    })
     @GetMapping("/filter")
     public ResponseEntity<HotelListWithCounterResponse> filterBy(HotelFilter filter) {
         log.info("Filter by request with filter: '{}'", filter);
