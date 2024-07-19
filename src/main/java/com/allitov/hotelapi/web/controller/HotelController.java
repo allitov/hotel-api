@@ -125,7 +125,7 @@ public class HotelController {
             ),
     })
     @GetMapping("/filter")
-    public ResponseEntity<HotelListWithCounterResponse> filterBy(HotelFilter filter) {
+    public ResponseEntity<HotelListWithCounterResponse> filterBy(@Valid HotelFilter filter) {
         log.info("Filter by request with filter: '{}'", filter);
 
         return ResponseEntity.ok(hotelMapper.entityListToListWithCounterResponse(hotelService.filterBy(filter)));

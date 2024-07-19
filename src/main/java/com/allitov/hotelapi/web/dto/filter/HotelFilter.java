@@ -1,10 +1,7 @@
 package com.allitov.hotelapi.web.dto.filter;
 
 import io.swagger.v3.oas.annotations.media.Schema;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.util.List;
 
@@ -12,17 +9,13 @@ import java.util.List;
  * The filter request class for the hotel entity.
  * @author allitov
  */
+
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class HotelFilter {
-
-    @Schema(example = "1")
-    private Integer pageSize;
-
-    @Schema(example = "0")
-    private Integer pageNumber;
+@EqualsAndHashCode(callSuper = true)
+public class HotelFilter extends AbstractFilter {
 
     @Schema(example = "[1, 2, 3]")
     private List<Integer> id;
@@ -47,4 +40,20 @@ public class HotelFilter {
 
     @Schema(example = "299")
     private Integer numberOfRatings;
+
+    @Override
+    public String toString() {
+        return "HotelFilter(" +
+                "id=" + id +
+                ", name=" + name +
+                ", description=" + description +
+                ", city=" + city +
+                ", address=" + address +
+                ", distanceFromCenter=" + distanceFromCenter +
+                ", rating=" + rating +
+                ", numberOfRatings=" + numberOfRatings +
+                ", pageSize=" + pageSize +
+                ", pageNumber=" + pageNumber +
+                ')';
+    }
 }
