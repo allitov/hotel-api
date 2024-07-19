@@ -18,6 +18,12 @@ import java.util.List;
 @AllArgsConstructor
 public class HotelFilter {
 
+    @Schema(example = "1")
+    private Integer pageSize;
+
+    @Schema(example = "0")
+    private Integer pageNumber;
+
     @Schema(example = "[1, 2, 3]")
     private List<Integer> id;
 

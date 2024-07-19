@@ -9,6 +9,7 @@ import com.allitov.hotelapi.model.service.util.ServiceUtils;
 import com.allitov.hotelapi.web.dto.filter.HotelFilter;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import java.text.MessageFormat;
@@ -40,7 +41,14 @@ public class DatabaseHotelService implements HotelService {
      */
     @Override
     public List<Hotel> filterBy(HotelFilter filter) {
-        return hotelRepository.findAll(HotelSpecification.withFilter(filter));
+        if (filter.getPageSize() == null || filter.getPageNumber() == null) {
+            return hotelRepository.findAll(HotelSpecification.withFilter(filter));
+        }
+
+        return hotelRepository.findAll(
+                HotelSpecification.withFilter(filter),
+                PageRequest.of(filter.getPageNumber(), filter.getPageSize()))
+                .getContent();
     }
 
     /**
