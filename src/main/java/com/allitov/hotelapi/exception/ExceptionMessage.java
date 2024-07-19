@@ -84,4 +84,10 @@ public class ExceptionMessage {
     public final String BOOKING_NULL_FROM_DATE = "'from' date must be specified.";
 
     public final String BOOKING_NULL_TO_DATE = "'to' date must be specified.";
+
+    public final String FILTER_INVALID_PAGINATION = "Page number and page size both must be specified or not.";
+
+    public final String FILTER_INVALID_PAGE_SIZE = "Page size must be > 0.";
+
+    public final String FILTER_INVALID_PAGE_NUMBER = "Page number must be >= 0.";
 }

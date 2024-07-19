@@ -2,8 +2,10 @@ package com.allitov.hotelapi.web.controller;
 
 import com.allitov.hotelapi.model.entity.Hotel;
 import com.allitov.hotelapi.model.service.HotelService;
+import com.allitov.hotelapi.web.dto.filter.HotelFilter;
 import com.allitov.hotelapi.web.dto.request.HotelRequest;
 import com.allitov.hotelapi.web.dto.response.HotelListResponse;
+import com.allitov.hotelapi.web.dto.response.HotelListWithCounterResponse;
 import com.allitov.hotelapi.web.dto.response.HotelResponse;
 import com.allitov.hotelapi.web.mapping.HotelMapper;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -288,6 +290,41 @@ public class HotelControllerTest {
                 .updateRatingById(id, newMark);
     }
 
+    @Test
+    @DisplayName("Test filterBy() status 200")
+    public void givenHotelFilter_whenFilterBy_thenHotelListWithCounter() throws Exception {
+        HotelFilter filter = new HotelFilter();
+        filter.setName("name");
+        List<Hotel> foundHotels = Collections.emptyList();
+        Mockito.when(hotelService.filterBy(filter))
+                .thenReturn(foundHotels);
+        Mockito.when(hotelMapper.entityListToListWithCounterResponse(foundHotels))
+                .thenReturn(new HotelListWithCounterResponse(Collections.emptyList(), 0));
+
+        mockMvc.perform(get(baseUri + "/filter?name={name}", filter.getName()))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(content().json("{'hotels': [], 'count': 0}"));
+
+        Mockito.verify(hotelService, Mockito.times(1))
+                .filterBy(filter);
+        Mockito.verify(hotelMapper, Mockito.times(1))
+                .entityListToListWithCounterResponse(foundHotels);
+    }
+
+    @Test
+    @DisplayName("Test filterBy() status 400")
+    public void givenHotelFilter_whenFilterBy_thenErrorResponse() throws Exception {
+        Integer pageNumber = 10;
+        Integer pageSize = -10;
+
+        mockMvc.perform(get(baseUri + "/filter?pageNumber={pageNumber}&pageSize={pageSize}",
+                        pageNumber, pageSize))
+                .andExpect(status().isBadRequest())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(content().json("{'errorMessage': 'Page size must be > 0.'}"));
+    }
+
     // validation tests
 
     @ParameterizedTest
@@ -424,6 +461,56 @@ public class HotelControllerTest {
                 .andExpect(content().json("{'errorMessage': 'Distance from center must be specified.'}"));
     }
 
+    @Test
+    @DisplayName("Test HotelFilter validation with null pageNumber")
+    public void givenNullHotelFilterPageNumber_whenFilterBy_thenErrorResponse() throws Exception {
+        Integer pageSize = 10;
+
+        mockMvc.perform(get(baseUri + "/filter?pageSize={pageSize}", pageSize))
+                .andExpect(status().isBadRequest())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(content().json("{'errorMessage': " +
+                        "'Page number and page size both must be specified or not.'}"));
+    }
+
+    @Test
+    @DisplayName("Test HotelFilter validation with null pageSize")
+    public void givenNullHotelFilterPageSize_whenFilterBy_thenErrorResponse() throws Exception {
+        Integer pageNumber = 10;
+
+        mockMvc.perform(get(baseUri + "/filter?pageSize={pageNumber}", pageNumber))
+                .andExpect(status().isBadRequest())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(content().json("{'errorMessage': " +
+                        "'Page number and page size both must be specified or not.'}"));
+    }
+
+    @ParameterizedTest
+    @MethodSource("createInvalidPageNumber")
+    @DisplayName("Test HotelFilter validation with invalid pageNumber")
+    public void givenInvalidHotelFilterPageNumber_whenFilterBy_thenErrorResponse(Integer pageNumber) throws Exception {
+        Integer pageSize = 10;
+
+        mockMvc.perform(get(baseUri + "/filter?pageNumber={pageNumber}&pageSize={pageSize}",
+                        pageNumber, pageSize))
+                .andExpect(status().isBadRequest())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(content().json("{'errorMessage': 'Page number must be >= 0.'}"));
+    }
+
+    @ParameterizedTest
+    @MethodSource("createInvalidPageSize")
+    @DisplayName("Test HotelFilter validation with invalid pageSize")
+    public void givenInvalidHotelFilterPageSize_whenFilterBy_thenErrorResponse(Integer pageSize) throws Exception {
+        Integer pageNumber = 10;
+
+        mockMvc.perform(get(baseUri + "/filter?pageSize={pageSize}&pageNumber={pageNumber}",
+                        pageSize, pageNumber))
+                .andExpect(status().isBadRequest())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(content().json("{'errorMessage': 'Page size must be > 0.'}"));
+    }
+
     private HotelResponse creteHotelResponse() {
         return HotelResponse.builder()
                 .id(1)
@@ -458,6 +545,21 @@ public class HotelControllerTest {
     private static Stream<Arguments> createInvalidStrings() {
         return Stream.of(
                 Arguments.of(RandomString.make(256))
+        );
+    }
+
+    private static Stream<Arguments> createInvalidPageSize() {
+        return Stream.of(
+                Arguments.of(0),
+                Arguments.of(-1),
+                Arguments.of(-10)
+        );
+    }
+
+    private static Stream<Arguments> createInvalidPageNumber() {
+        return Stream.of(
+                Arguments.of(-10),
+                Arguments.of(-1)
         );
     }
 }

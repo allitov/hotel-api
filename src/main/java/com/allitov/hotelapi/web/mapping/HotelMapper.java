@@ -3,6 +3,7 @@ package com.allitov.hotelapi.web.mapping;
 import com.allitov.hotelapi.model.entity.Hotel;
 import com.allitov.hotelapi.web.dto.request.HotelRequest;
 import com.allitov.hotelapi.web.dto.response.HotelListResponse;
+import com.allitov.hotelapi.web.dto.response.HotelListWithCounterResponse;
 import com.allitov.hotelapi.web.dto.response.HotelResponse;
 import org.mapstruct.Mapper;
 import org.mapstruct.ReportingPolicy;
@@ -37,6 +38,19 @@ public interface HotelMapper {
      */
     default HotelListResponse entityListToListResponse(List<Hotel> hotels) {
         HotelListResponse response = new HotelListResponse();
+        response.setHotels(hotels.stream().map(this::entityToResponse).toList());
+
+        return response;
+    }
+
+    /**
+     * Creates a hotel list with counter response DTO from a list of hotel entities and returns it.
+     * @param hotels a list of hotel entities to create a hotel list with counter response DTO from.
+     * @return a hotel list with counter response DTO.
+     */
+    default HotelListWithCounterResponse entityListToListWithCounterResponse(List<Hotel> hotels) {
+        HotelListWithCounterResponse response = new HotelListWithCounterResponse();
+        response.setCount(hotels.size());
         response.setHotels(hotels.stream().map(this::entityToResponse).toList());
 
         return response;

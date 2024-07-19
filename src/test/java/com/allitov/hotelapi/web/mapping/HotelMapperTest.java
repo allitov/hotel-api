@@ -3,6 +3,7 @@ package com.allitov.hotelapi.web.mapping;
 import com.allitov.hotelapi.model.entity.Hotel;
 import com.allitov.hotelapi.web.dto.request.HotelRequest;
 import com.allitov.hotelapi.web.dto.response.HotelListResponse;
+import com.allitov.hotelapi.web.dto.response.HotelListWithCounterResponse;
 import com.allitov.hotelapi.web.dto.response.HotelResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -74,6 +75,23 @@ public class HotelMapperTest {
         HotelListResponse response = new HotelListResponse(List.of(hotelResponse));
 
         HotelListResponse actualResponse = hotelMapper.entityListToListResponse(List.of(hotel));
+
+        assertEquals(response, actualResponse);
+    }
+
+    @Test
+    @DisplayName("Test entityListToListWithCounterResponse()")
+    public void givenHotelList_whenEntityListToListWithCounterResponse_thenHotelListWithCounterResponse() {
+        HotelResponse hotelResponse = HotelResponse.builder()
+                .name("name")
+                .description("description")
+                .city("city")
+                .address("address")
+                .distanceFromCenter(1.5F)
+                .build();
+        HotelListWithCounterResponse response = new HotelListWithCounterResponse(List.of(hotelResponse), 1);
+
+        HotelListWithCounterResponse actualResponse = hotelMapper.entityListToListWithCounterResponse(List.of(hotel));
 
         assertEquals(response, actualResponse);
     }
