@@ -9,7 +9,6 @@ import java.util.List;
  * The filter request class for the hotel entity.
  * @author allitov
  */
-
 @Data
 @Builder
 @NoArgsConstructor

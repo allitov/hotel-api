@@ -14,6 +14,11 @@ import java.util.List;
 @UtilityClass
 public class HotelSpecification {
 
+    /**
+     * Returns specification for filtering hotel entities.
+     * @param filter a filter by which the specification is built.
+     * @return a specification for filtering hotel entities.
+     */
     public Specification<Hotel> withFilter(HotelFilter filter) {
         return Specification
                 .where(byIdsIn(filter.getId()))
