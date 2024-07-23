@@ -125,7 +125,7 @@ public class RoomController {
             )
     })
     @GetMapping("/filter")
-    public ResponseEntity<RoomListWithCounterResponse> filterBy(RoomFilter filter) {
+    public ResponseEntity<RoomListWithCounterResponse> filterBy(@Valid RoomFilter filter) {
         log.info("Filter by request with filter: '{}'", filter);
 
         return ResponseEntity.ok(roomMapper.entityListToListWithCounterResponse(roomService.filterBy(filter)));
