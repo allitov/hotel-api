@@ -17,8 +17,8 @@ import java.util.List;
 @AllArgsConstructor
 public class HotelListWithCounterResponse {
 
-    private List<HotelResponse> hotels = new ArrayList<>();
-
     @Schema(example = "1")
     private Integer count;
+
+    private List<HotelResponse> hotels = new ArrayList<>();
 }
