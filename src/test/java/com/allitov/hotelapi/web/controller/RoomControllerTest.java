@@ -2,8 +2,10 @@ package com.allitov.hotelapi.web.controller;
 
 import com.allitov.hotelapi.model.entity.Room;
 import com.allitov.hotelapi.model.service.RoomService;
+import com.allitov.hotelapi.web.dto.filter.RoomFilter;
 import com.allitov.hotelapi.web.dto.request.RoomRequest;
 import com.allitov.hotelapi.web.dto.response.RoomListResponse;
+import com.allitov.hotelapi.web.dto.response.RoomListWithCounterResponse;
 import com.allitov.hotelapi.web.dto.response.RoomResponse;
 import com.allitov.hotelapi.web.mapping.RoomMapper;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -22,6 +24,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Stream;
 
@@ -241,6 +244,28 @@ public class RoomControllerTest {
 
         Mockito.verify(roomService, Mockito.times(1))
                 .deleteById(id);
+    }
+
+    @Test
+    @DisplayName("Test filterBy() status 200")
+    public void givenRoomFilter_whenFilterBy_thenRoomWithCounterResponse() throws Exception {
+        RoomFilter filter = new RoomFilter();
+        filter.setDescription("description");
+        List<Room> foundRooms = Collections.emptyList();
+        Mockito.when(roomService.filterBy(filter))
+                .thenReturn(foundRooms);
+        Mockito.when(roomMapper.entityListToListWithCounterResponse(foundRooms))
+                .thenReturn(new RoomListWithCounterResponse(0, Collections.emptyList()));
+
+        mockMvc.perform(get(baseUri + "/filter?description={description}", filter.getDescription()))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(content().json("{'rooms': [], 'count': 0}"));
+
+        Mockito.verify(roomService, Mockito.times(1))
+                .filterBy(filter);
+        Mockito.verify(roomMapper, Mockito.times(1))
+                .entityListToListWithCounterResponse(foundRooms);
     }
 
     // validation tests

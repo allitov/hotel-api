@@ -89,7 +89,7 @@ public class HotelMapperTest {
                 .address("address")
                 .distanceFromCenter(1.5F)
                 .build();
-        HotelListWithCounterResponse response = new HotelListWithCounterResponse(List.of(hotelResponse), 1);
+        HotelListWithCounterResponse response = new HotelListWithCounterResponse(1, List.of(hotelResponse));
 
         HotelListWithCounterResponse actualResponse = hotelMapper.entityListToListWithCounterResponse(List.of(hotel));
 
