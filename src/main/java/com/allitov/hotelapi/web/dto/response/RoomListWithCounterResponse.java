@@ -1,6 +1,6 @@
 package com.allitov.hotelapi.web.dto.response;
 
-import com.allitov.hotelapi.model.entity.Room;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -17,6 +17,7 @@ import java.util.List;
 @AllArgsConstructor
 public class RoomListWithCounterResponse {
 
+    @Schema(example = "1")
     private Integer count;
 
     private List<RoomResponse> rooms = new ArrayList<>();

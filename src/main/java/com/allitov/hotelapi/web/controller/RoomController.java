@@ -85,6 +85,45 @@ public class RoomController {
         return ResponseEntity.ok(roomMapper.entityListToListResponse(roomService.findAll()));
     }
 
+    @Operation(
+            summary = "Get rooms by filter",
+            description = "Get rooms by filter. Returns a list of rooms with counter. " +
+                    "Requires any of the authorities: ['ADMIN', 'USER'].",
+            security = @SecurityRequirement(name = "Basic authorisation")
+    )
+    @ApiResponses({
+            @ApiResponse(
+                    description = "Returns status 200 and list of rooms with counter " +
+                            "if everything completed successfully.",
+                    responseCode = "200",
+                    content = {
+                            @Content(
+                                    schema = @Schema(implementation = RoomListWithCounterResponse.class),
+                                    mediaType = "application/json"
+                            )
+                    }
+            ),
+            @ApiResponse(
+                    description = "Returns status 401 and error message if user is not authorized.",
+                    responseCode = "401",
+                    content = {
+                            @Content(
+                                    schema = @Schema(implementation = ErrorResponse.class),
+                                    mediaType = "application/json"
+                            )
+                    }
+            ),
+            @ApiResponse(
+                    description = "Returns status 403 and error message if user has no required authorities.",
+                    responseCode = "403",
+                    content = {
+                            @Content(
+                                    schema = @Schema(implementation = ErrorResponse.class),
+                                    mediaType = "application/json"
+                            )
+                    }
+            )
+    })
     @GetMapping("/filter")
     public ResponseEntity<RoomListWithCounterResponse> filterBy(RoomFilter filter) {
         log.info("Filter by request with filter: '{}'", filter);
