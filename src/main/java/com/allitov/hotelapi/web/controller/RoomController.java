@@ -104,6 +104,16 @@ public class RoomController {
                     }
             ),
             @ApiResponse(
+                    description = "Returns status 400 and error message if request has invalid values.",
+                    responseCode = "400",
+                    content = {
+                            @Content(
+                                    schema = @Schema(implementation = ErrorResponse.class),
+                                    mediaType = "application/json"
+                            )
+                    }
+            ),
+            @ApiResponse(
                     description = "Returns status 401 and error message if user is not authorized.",
                     responseCode = "401",
                     content = {
