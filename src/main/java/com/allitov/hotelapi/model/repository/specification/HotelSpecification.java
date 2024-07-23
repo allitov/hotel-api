@@ -5,7 +5,7 @@ import com.allitov.hotelapi.web.dto.filter.HotelFilter;
 import lombok.experimental.UtilityClass;
 import org.springframework.data.jpa.domain.Specification;
 
-import java.util.List;
+import java.util.Collection;
 
 /**
  * The specification class for the hotel repository.
@@ -23,6 +23,7 @@ public class HotelSpecification {
         return Specification
                 .where(byIdsIn(filter.getId()))
                 .and(byName(filter.getName()))
+                .and(byDescription(filter.getDescription()))
                 .and(byCity(filter.getCity()))
                 .and(byAddress(filter.getAddress()))
                 .and(byDistanceFromCenter(filter.getDistanceFromCenter()))
@@ -30,7 +31,7 @@ public class HotelSpecification {
                 .and(byNumberOfRatings(filter.getNumberOfRatings()));
     }
 
-    private Specification<Hotel> byIdsIn(List<Integer> ids) {
+    private Specification<Hotel> byIdsIn(Collection<Integer> ids) {
         return (root, query, builder) -> {
             if (ids == null) {
                 return null;
@@ -47,6 +48,16 @@ public class HotelSpecification {
             }
 
             return builder.equal(root.get(Hotel.Fields.name), name);
+        };
+    }
+
+    private Specification<Hotel> byDescription(String description) {
+        return (root, query, builder) -> {
+            if (description == null) {
+                return null;
+            }
+
+            return builder.equal(root.get(Hotel.Fields.description), description);
         };
     }
 
