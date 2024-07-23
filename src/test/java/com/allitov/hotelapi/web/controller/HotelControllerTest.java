@@ -314,7 +314,7 @@ public class HotelControllerTest {
 
     @Test
     @DisplayName("Test filterBy() status 400")
-    public void givenHotelFilter_whenFilterBy_thenErrorResponse() throws Exception {
+    public void givenInvalidHotelFilterPageSize_whenFilterBy_thenErrorResponse() throws Exception {
         Integer pageNumber = 10;
         Integer pageSize = -10;
 

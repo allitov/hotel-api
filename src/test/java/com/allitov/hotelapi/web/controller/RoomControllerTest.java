@@ -268,6 +268,19 @@ public class RoomControllerTest {
                 .entityListToListWithCounterResponse(foundRooms);
     }
 
+    @Test
+    @DisplayName("Test filterBy() status 400")
+    public void givenInvalidRoomFilterPageSize_whenFilterBy_thenErrorResponse() throws Exception {
+        Integer pageSize = -1;
+        Integer pageNumber = 10;
+
+        mockMvc.perform(get(baseUri + "/filter?pageNumber={pageNumber}&pageSize={pageSize}",
+                        pageNumber, pageSize))
+                .andExpect(status().isBadRequest())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(content().json("{'errorMessage': 'Page size must be > 0.'}"));
+    }
+
     // validation tests
 
     @Test
@@ -387,6 +400,56 @@ public class RoomControllerTest {
                         "{'errorMessage': 'Maximum number of people must be greater than zero.'}"));
     }
 
+    @Test
+    @DisplayName("Test RoomFilter validation with null pageNumber")
+    public void givenNullRoomFilterPageNumber_whenFilterBy_thenErrorResponse() throws Exception {
+        Integer pageSize = 10;
+
+        mockMvc.perform(get(baseUri + "/filter?pageSize={pageSize}", pageSize))
+                .andExpect(status().isBadRequest())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(content().json("{'errorMessage': " +
+                        "'Page number and page size both must be specified or not.'}"));
+    }
+
+    @Test
+    @DisplayName("Test RoomFilter validation with null pageSize")
+    public void givenNullRoomFilterPageSize_whenFilterBy_thenErrorResponse() throws Exception {
+        Integer pageNumber = 10;
+
+        mockMvc.perform(get(baseUri + "/filter?pageSize={pageNumber}", pageNumber))
+                .andExpect(status().isBadRequest())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(content().json("{'errorMessage': " +
+                        "'Page number and page size both must be specified or not.'}"));
+    }
+
+    @ParameterizedTest
+    @MethodSource("createInvalidPageNumber")
+    @DisplayName("Test RoomFilter validation with invalid pageNumber")
+    public void givenInvalidRoomFilterPageNumber_whenFilterBy_thenErrorResponse(Integer pageNumber) throws Exception {
+        Integer pageSize = 10;
+
+        mockMvc.perform(get(baseUri + "/filter?pageNumber={pageNumber}&pageSize={pageSize}",
+                        pageNumber, pageSize))
+                .andExpect(status().isBadRequest())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(content().json("{'errorMessage': 'Page number must be >= 0.'}"));
+    }
+
+    @ParameterizedTest
+    @MethodSource("createInvalidPageSize")
+    @DisplayName("Test RoomFilter validation with invalid pageSize")
+    public void givenInvalidRoomFilterPageSize_whenFilterBy_thenErrorResponse(Integer pageSize) throws Exception {
+        Integer pageNumber = 10;
+
+        mockMvc.perform(get(baseUri + "/filter?pageSize={pageSize}&pageNumber={pageNumber}",
+                        pageSize, pageNumber))
+                .andExpect(status().isBadRequest())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(content().json("{'errorMessage': 'Page size must be > 0.'}"));
+    }
+
     private RoomResponse createRoomResponse() {
         return RoomResponse.builder()
                 .id(1)
@@ -426,6 +489,21 @@ public class RoomControllerTest {
         return Stream.of(
                 Arguments.of(0),
                 Arguments.of(-100)
+        );
+    }
+
+    private static Stream<Arguments> createInvalidPageSize() {
+        return Stream.of(
+                Arguments.of(0),
+                Arguments.of(-1),
+                Arguments.of(-10)
+        );
+    }
+
+    private static Stream<Arguments> createInvalidPageNumber() {
+        return Stream.of(
+                Arguments.of(-10),
+                Arguments.of(-1)
         );
     }
 }

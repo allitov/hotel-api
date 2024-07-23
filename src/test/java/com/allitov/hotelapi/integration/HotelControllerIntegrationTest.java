@@ -601,7 +601,7 @@ public class HotelControllerIntegrationTest extends AbstractIntegrationTest {
             userDetailsServiceBeanName = USER_DETAILS_SERVICE_BEAN_NAME,
             setupBefore = TestExecutionEvent.TEST_METHOD
     )
-    public void givenFilterAndRoleUser_whenFilterBy_thenHotelListWithCounterResponse() throws Exception {
+    public void givenHotelFilterAndRoleUser_whenFilterBy_thenHotelListWithCounterResponse() throws Exception {
         String hotelName = "Lubowitz LLC";
         String expectedResponse = TestUtils.readStringFromResource(
                 "response/hotel/hotel_list_with_counter_response.json");
@@ -623,7 +623,7 @@ public class HotelControllerIntegrationTest extends AbstractIntegrationTest {
             value = "admin",
             setupBefore = TestExecutionEvent.TEST_METHOD
     )
-    public void givenFilterAndRoleAdmin_whenFilterBy_thenHotelListWithCounterResponse() throws Exception {
+    public void givenHotelFilterAndRoleAdmin_whenFilterBy_thenHotelListWithCounterResponse() throws Exception {
         String hotelName = "Lubowitz LLC";
         String expectedResponse = TestUtils.readStringFromResource(
                 "response/hotel/hotel_list_with_counter_response.json");
@@ -645,7 +645,7 @@ public class HotelControllerIntegrationTest extends AbstractIntegrationTest {
             value = "admin",
             setupBefore = TestExecutionEvent.TEST_METHOD
     )
-    public void givenFilterAndRoleAdmin_whenFilterBy_thenErrorResponse() throws Exception {
+    public void givenNullHotelFilterPageNumberAndRoleAdmin_whenFilterBy_thenErrorResponse() throws Exception {
         Integer pageSize = 10;
         String expectedResponse = TestUtils.readStringFromResource(
                 "response/filter_invalid_pagination_response.json");
@@ -663,7 +663,7 @@ public class HotelControllerIntegrationTest extends AbstractIntegrationTest {
     @Test
     @DisplayName("Test filterBy() status 401")
     @WithAnonymousUser
-    public void givenFilterAndRoleAnonymous_whenFilterBy_thenErrorResponse() throws Exception {
+    public void givenHotelFilterAndRoleAnonymous_whenFilterBy_thenErrorResponse() throws Exception {
         String hotelName = "Lubowitz LLC";
         String expectedResponse = TestUtils.readStringFromResource(
                 "response/authentication_failure_response.json");
@@ -681,7 +681,7 @@ public class HotelControllerIntegrationTest extends AbstractIntegrationTest {
     @Test
     @DisplayName("Test filterBy() status 403")
     @WithMockUser(username = "user", authorities = "INVALID")
-    public void givenFilterAndRoleInvalid_whenFilterBy_thenErrorResponse() throws Exception {
+    public void givenHotelFilterAndRoleInvalid_whenFilterBy_thenErrorResponse() throws Exception {
         String hotelName = "Lubowitz LLC";
         String expectedResponse = TestUtils.readStringFromResource(
                 "response/access_denied_response.json");
