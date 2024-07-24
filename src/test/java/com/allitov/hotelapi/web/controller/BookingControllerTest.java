@@ -2,8 +2,10 @@ package com.allitov.hotelapi.web.controller;
 
 import com.allitov.hotelapi.model.entity.Booking;
 import com.allitov.hotelapi.model.service.BookingService;
+import com.allitov.hotelapi.web.dto.filter.BookingFilter;
 import com.allitov.hotelapi.web.dto.request.BookingRequest;
 import com.allitov.hotelapi.web.dto.response.BookingListResponse;
+import com.allitov.hotelapi.web.dto.response.BookingListWithCounterResponse;
 import com.allitov.hotelapi.web.dto.response.BookingResponse;
 import com.allitov.hotelapi.web.mapping.BookingMapper;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -141,6 +143,29 @@ public class BookingControllerTest {
                 .requestToEntity(request);
         Mockito.verify(bookingService, Mockito.times(1))
                 .create(booking);
+    }
+
+    @Test
+    @DisplayName("Test filterBy() status 200")
+    public void givenBookingFilter_whenFilterBy_thenBookingListWithCounterResponse() throws Exception {
+        BookingFilter filter = new BookingFilter(1, 0);
+        List<Booking> foundBookings = Collections.emptyList();
+        Mockito.when(bookingService.filterBy(filter))
+                .thenReturn(foundBookings);
+        Mockito.when(bookingMapper.entityListToListWithCounterResponse(foundBookings))
+                .thenReturn(new BookingListWithCounterResponse(0, Collections.emptyList()));
+
+        mockMvc.perform(get(
+                baseUri + "/filter?pageSize={size}&pageNumber={number}",
+                        filter.getPageSize(), filter.getPageNumber()))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(content().json("{'bookings': [], 'count': 0}"));
+
+        Mockito.verify(bookingService, Mockito.times(1))
+                .filterBy(filter);
+        Mockito.verify(bookingMapper, Mockito.times(1))
+                .entityListToListWithCounterResponse(foundBookings);
     }
 
     // validation tests
