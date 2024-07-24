@@ -119,7 +119,7 @@ public class BookingController {
             ),
     })
     @GetMapping("/filter")
-    public ResponseEntity<BookingListWithCounterResponse> filterBy(BookingFilter filter) {
+    public ResponseEntity<BookingListWithCounterResponse> filterBy(@Valid BookingFilter filter) {
         log.info("Filter by request with filter: '{}'", filter);
 
         return ResponseEntity.ok(bookingMapper.entityListToListWithCounterResponse(bookingService.filterBy(filter)));
