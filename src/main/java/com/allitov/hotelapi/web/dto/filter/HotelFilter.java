@@ -10,9 +10,6 @@ import java.util.List;
  * @author allitov
  */
 @Data
-@Builder
-@NoArgsConstructor
-@AllArgsConstructor
 @EqualsAndHashCode(callSuper = true)
 public class HotelFilter extends AbstractFilter {
 
@@ -39,6 +36,24 @@ public class HotelFilter extends AbstractFilter {
 
     @Schema(example = "299")
     private Integer numberOfRatings;
+
+    @Builder
+    public HotelFilter(Integer pageSize, Integer pageNumber, List<Integer> id, String name,
+                       String description, String city, String address,
+                       Float distanceFromCenter, Float rating, Integer numberOfRatings) {
+        super(pageSize, pageNumber);
+        this.id = id;
+        this.name = name;
+        this.description = description;
+        this.city = city;
+        this.address = address;
+        this.distanceFromCenter = distanceFromCenter;
+        this.rating = rating;
+        this.numberOfRatings = numberOfRatings;
+    }
+
+    public HotelFilter() {
+    }
 
     @Override
     public String toString() {

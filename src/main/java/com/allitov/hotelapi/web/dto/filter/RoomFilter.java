@@ -12,9 +12,6 @@ import java.util.List;
  * @author allitov
  */
 @Data
-@Builder
-@NoArgsConstructor
-@AllArgsConstructor
 @EqualsAndHashCode(callSuper = true)
 public class RoomFilter extends AbstractFilter {
 
@@ -41,6 +38,24 @@ public class RoomFilter extends AbstractFilter {
 
     @Schema(example = "1")
     private Integer hotelId;
+
+    @Builder
+    public RoomFilter(Integer pageSize, Integer pageNumber, List<Integer> id, String description,
+                      BigDecimal minPrice, BigDecimal maxPrice, Short maxPeople,
+                      LocalDate from, LocalDate to, Integer hotelId) {
+        super(pageSize, pageNumber);
+        this.id = id;
+        this.description = description;
+        this.minPrice = minPrice;
+        this.maxPrice = maxPrice;
+        this.maxPeople = maxPeople;
+        this.from = from;
+        this.to = to;
+        this.hotelId = hotelId;
+    }
+
+    public RoomFilter() {
+    }
 
     @Override
     public String toString() {

@@ -5,17 +5,15 @@ import com.allitov.hotelapi.web.validation.ValidPagination;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.Positive;
 import jakarta.validation.constraints.PositiveOrZero;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 /**
  * An abstract class for all filters. Implements validation for pagination.
  * @author allitov
  */
-@Getter
-@Setter
-@EqualsAndHashCode
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
 @ValidPagination(message = ExceptionMessage.FILTER_INVALID_PAGINATION)
 public abstract class AbstractFilter {
 
