@@ -8,7 +8,9 @@ import com.allitov.hotelapi.model.repository.UnavailableDatesRepository;
 import com.allitov.hotelapi.model.service.BookingService;
 import com.allitov.hotelapi.model.service.RoomService;
 import com.allitov.hotelapi.model.service.UserService;
+import com.allitov.hotelapi.web.dto.filter.BookingFilter;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import java.text.MessageFormat;
@@ -38,6 +40,22 @@ public class DatabaseBookingService implements BookingService {
     @Override
     public List<Booking> findAll() {
         return bookingRepository.findAll();
+    }
+
+    /**
+     * Returns a list of bookings that match the filtering parameters.
+     * @param filter a filter to search for booking entities.
+     * @return a list of found booking entities.
+     */
+    @Override
+    public List<Booking> filterBy(BookingFilter filter) {
+        if (filter.getPageSize() == null || filter.getPageNumber() == null) {
+            return findAll();
+        }
+
+        return bookingRepository.findAll(
+                PageRequest.of(filter.getPageNumber(), filter.getPageSize()))
+                .getContent();
     }
 
     /**

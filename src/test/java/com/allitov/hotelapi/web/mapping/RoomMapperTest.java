@@ -4,6 +4,7 @@ import com.allitov.hotelapi.model.entity.Hotel;
 import com.allitov.hotelapi.model.entity.Room;
 import com.allitov.hotelapi.web.dto.request.RoomRequest;
 import com.allitov.hotelapi.web.dto.response.RoomListResponse;
+import com.allitov.hotelapi.web.dto.response.RoomListWithCounterResponse;
 import com.allitov.hotelapi.web.dto.response.RoomResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -84,6 +85,24 @@ public class RoomMapperTest {
         RoomListResponse response = new RoomListResponse(List.of(roomResponse));
 
         RoomListResponse actualResponse = roomMapper.entityListToListResponse(List.of(room));
+
+        assertEquals(response, actualResponse);
+    }
+
+    @Test
+    @DisplayName("Test entityListToListWithCounterResponse()")
+    public void givenRoomList_whenEntityListToListWithCounterResponse_thenRoomListWithCounterResponse() {
+        RoomResponse roomResponse = RoomResponse.builder()
+                .id(1)
+                .hotelId(1)
+                .description("description")
+                .number((short) 101)
+                .price("123.45")
+                .maxPeople((short) 5)
+                .build();
+        RoomListWithCounterResponse response = new RoomListWithCounterResponse(1, List.of(roomResponse));
+
+        RoomListWithCounterResponse actualResponse = roomMapper.entityListToListWithCounterResponse(List.of(room));
 
         assertEquals(response, actualResponse);
     }

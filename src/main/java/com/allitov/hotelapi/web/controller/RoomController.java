@@ -1,9 +1,11 @@
 package com.allitov.hotelapi.web.controller;
 
 import com.allitov.hotelapi.model.service.RoomService;
+import com.allitov.hotelapi.web.dto.filter.RoomFilter;
 import com.allitov.hotelapi.web.dto.request.RoomRequest;
 import com.allitov.hotelapi.web.dto.response.ErrorResponse;
 import com.allitov.hotelapi.web.dto.response.RoomListResponse;
+import com.allitov.hotelapi.web.dto.response.RoomListWithCounterResponse;
 import com.allitov.hotelapi.web.dto.response.RoomResponse;
 import com.allitov.hotelapi.web.mapping.RoomMapper;
 import io.swagger.v3.oas.annotations.Operation;
@@ -81,6 +83,62 @@ public class RoomController {
         log.info("Find all request");
 
         return ResponseEntity.ok(roomMapper.entityListToListResponse(roomService.findAll()));
+    }
+
+    @Operation(
+            summary = "Get rooms by filter",
+            description = "Get rooms by filter. Returns a list of rooms with counter. " +
+                    "Requires any of the authorities: ['ADMIN', 'USER'].",
+            security = @SecurityRequirement(name = "Basic authorisation")
+    )
+    @ApiResponses({
+            @ApiResponse(
+                    description = "Returns status 200 and list of rooms with counter " +
+                            "if everything completed successfully.",
+                    responseCode = "200",
+                    content = {
+                            @Content(
+                                    schema = @Schema(implementation = RoomListWithCounterResponse.class),
+                                    mediaType = "application/json"
+                            )
+                    }
+            ),
+            @ApiResponse(
+                    description = "Returns status 400 and error message if request has invalid values.",
+                    responseCode = "400",
+                    content = {
+                            @Content(
+                                    schema = @Schema(implementation = ErrorResponse.class),
+                                    mediaType = "application/json"
+                            )
+                    }
+            ),
+            @ApiResponse(
+                    description = "Returns status 401 and error message if user is not authorized.",
+                    responseCode = "401",
+                    content = {
+                            @Content(
+                                    schema = @Schema(implementation = ErrorResponse.class),
+                                    mediaType = "application/json"
+                            )
+                    }
+            ),
+            @ApiResponse(
+                    description = "Returns status 403 and error message if user has no required authorities.",
+                    responseCode = "403",
+                    content = {
+                            @Content(
+                                    schema = @Schema(implementation = ErrorResponse.class),
+                                    mediaType = "application/json"
+                            )
+                    }
+            )
+    })
+    @GetMapping("/filter")
+    public ResponseEntity<RoomListWithCounterResponse> filterBy(@Valid RoomFilter filter) {
+        log.info("Filter by request with filter: '{}'", filter);
+
+        return ResponseEntity.ok(roomMapper.entityListToListWithCounterResponse(roomService.filterBy(filter)));
     }
 
     @Operation(

@@ -104,6 +104,107 @@ public class RoomControllerIntegrationTest extends AbstractIntegrationTest {
     }
 
     @Test
+    @DisplayName("Test filterBy() role USER status 200")
+    @WithUserDetails(
+            userDetailsServiceBeanName = USER_DETAILS_SERVICE_BEAN_NAME,
+            setupBefore = TestExecutionEvent.TEST_METHOD
+    )
+    public void givenRoomFilterAndRoleUser_whenFilterBy_thenRoomListWithCounterResponse() throws Exception {
+        String description = "Quisque porta volutpat erat.";
+        String expectedResponse = TestUtils.readStringFromResource(
+                "response/room/room_list_with_counter_response.json");
+
+        String actualResponse = mockMvc.perform(get(baseUri + "/filter?description={desc}", description))
+                            .andExpect(status().isOk())
+                            .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                            .andReturn()
+                            .getResponse()
+                            .getContentAsString();
+
+        assertJsonEquals(expectedResponse, actualResponse);
+    }
+
+    @Test
+    @DisplayName("Test filterBy() role ADMIN status 200")
+    @WithUserDetails(
+            userDetailsServiceBeanName = USER_DETAILS_SERVICE_BEAN_NAME,
+            value = "admin",
+            setupBefore = TestExecutionEvent.TEST_METHOD
+    )
+    public void givenRoomFilterAndRoleAdmin_whenFilterBy_thenRoomListWithCounterResponse() throws Exception {
+        String description = "Quisque porta volutpat erat.";
+        String expectedResponse = TestUtils.readStringFromResource(
+                "response/room/room_list_with_counter_response.json");
+
+        String actualResponse = mockMvc.perform(get(baseUri + "/filter?description={desc}", description))
+                            .andExpect(status().isOk())
+                            .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                            .andReturn()
+                            .getResponse()
+                            .getContentAsString();
+
+        assertJsonEquals(expectedResponse, actualResponse);
+    }
+
+    @Test
+    @DisplayName("Test filterBy() status 400")
+    @WithUserDetails(
+            userDetailsServiceBeanName = USER_DETAILS_SERVICE_BEAN_NAME,
+            value = "admin",
+            setupBefore = TestExecutionEvent.TEST_METHOD
+    )
+    public void givenNullRoomFilterPageNumberAndRoleAdmin_whenFilterBy_thenErrorResponse() throws Exception {
+        Integer pageSize = 10;
+        String expectedResponse = TestUtils.readStringFromResource(
+                "response/filter_invalid_pagination_response.json");
+
+        String actualResponse = mockMvc.perform(get(baseUri + "/filter?pageSize={pageSize}", pageSize))
+                            .andExpect(status().isBadRequest())
+                            .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                            .andReturn()
+                            .getResponse()
+                            .getContentAsString();
+
+        assertJsonEquals(expectedResponse, actualResponse);
+    }
+
+    @Test
+    @DisplayName("Test filterBy() status 401")
+    @WithAnonymousUser
+    public void givenRoomFilterAndRoleAnonymous_whenFilterBy_thenErrorResponse() throws Exception {
+        String description = "Quisque porta volutpat erat.";
+        String expectedResponse = TestUtils.readStringFromResource(
+                "response/authentication_failure_response.json");
+
+        String actualResponse = mockMvc.perform(get(baseUri + "/filter?description={desc}", description))
+                            .andExpect(status().isUnauthorized())
+                            .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                            .andReturn()
+                            .getResponse()
+                            .getContentAsString();
+
+        assertJsonEquals(expectedResponse, actualResponse);
+    }
+
+    @Test
+    @DisplayName("Test filterBy() status 403")
+    @WithMockUser(username = "user", authorities = "INVALID")
+    public void givenRoomFilterAndRoleInvalid_whenFilterBy_thenErrorResponse() throws Exception {
+        String description = "Quisque porta volutpat erat.";
+        String expectedResponse = TestUtils.readStringFromResource(
+                "response/access_denied_response.json");
+
+        String actualResponse = mockMvc.perform(get(baseUri + "/filter?description={desc}", description))
+                            .andExpect(status().isForbidden())
+                            .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                            .andReturn()
+                            .getResponse()
+                            .getContentAsString();
+
+        assertJsonEquals(expectedResponse, actualResponse);
+    }
+
+    @Test
     @DisplayName("Test findById() role USER status 200")
     @WithUserDetails(
             userDetailsServiceBeanName = USER_DETAILS_SERVICE_BEAN_NAME,

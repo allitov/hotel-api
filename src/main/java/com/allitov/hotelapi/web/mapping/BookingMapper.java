@@ -3,6 +3,7 @@ package com.allitov.hotelapi.web.mapping;
 import com.allitov.hotelapi.model.entity.Booking;
 import com.allitov.hotelapi.web.dto.request.BookingRequest;
 import com.allitov.hotelapi.web.dto.response.BookingListResponse;
+import com.allitov.hotelapi.web.dto.response.BookingListWithCounterResponse;
 import com.allitov.hotelapi.web.dto.response.BookingResponse;
 import com.allitov.hotelapi.web.mapping.decorator.BookingMapperDecorator;
 import org.mapstruct.DecoratedWith;
@@ -40,6 +41,19 @@ public interface BookingMapper {
      */
     default BookingListResponse entityListToListResponse(List<Booking> bookings) {
         BookingListResponse response = new BookingListResponse();
+        response.setBookings(bookings.stream().map(this::entityToResponse).toList());
+
+        return response;
+    }
+
+    /**
+     * Creates a booking list with counter response DTO from a list of booking entities and returns it.
+     * @param bookings a list of booking entities to create a booking list with counter response DTO from.
+     * @return a booking list with counter response DTO.
+     */
+    default BookingListWithCounterResponse entityListToListWithCounterResponse(List<Booking> bookings) {
+        BookingListWithCounterResponse response = new BookingListWithCounterResponse();
+        response.setCount(bookings.size());
         response.setBookings(bookings.stream().map(this::entityToResponse).toList());
 
         return response;

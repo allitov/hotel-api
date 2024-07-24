@@ -292,14 +292,14 @@ public class HotelControllerTest {
 
     @Test
     @DisplayName("Test filterBy() status 200")
-    public void givenHotelFilter_whenFilterBy_thenHotelListWithCounter() throws Exception {
+    public void givenHotelFilter_whenFilterBy_thenHotelListWithCounterResponse() throws Exception {
         HotelFilter filter = new HotelFilter();
         filter.setName("name");
         List<Hotel> foundHotels = Collections.emptyList();
         Mockito.when(hotelService.filterBy(filter))
                 .thenReturn(foundHotels);
         Mockito.when(hotelMapper.entityListToListWithCounterResponse(foundHotels))
-                .thenReturn(new HotelListWithCounterResponse(Collections.emptyList(), 0));
+                .thenReturn(new HotelListWithCounterResponse(0, Collections.emptyList()));
 
         mockMvc.perform(get(baseUri + "/filter?name={name}", filter.getName()))
                 .andExpect(status().isOk())
@@ -314,7 +314,7 @@ public class HotelControllerTest {
 
     @Test
     @DisplayName("Test filterBy() status 400")
-    public void givenHotelFilter_whenFilterBy_thenErrorResponse() throws Exception {
+    public void givenInvalidHotelFilterPageSize_whenFilterBy_thenErrorResponse() throws Exception {
         Integer pageNumber = 10;
         Integer pageSize = -10;
 

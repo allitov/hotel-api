@@ -9,16 +9,16 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * The DTO list response class with counter for the hotel entity.
+ * The DTO list response class with counter for the booking entity.
  * @author allitov
  */
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class HotelListWithCounterResponse {
+public class BookingListWithCounterResponse {
 
     @Schema(example = "1")
     private Integer count;
 
-    private List<HotelResponse> hotels = new ArrayList<>();
+    private List<BookingResponse> bookings = new ArrayList<>();
 }

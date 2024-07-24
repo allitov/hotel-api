@@ -4,8 +4,7 @@ import com.allitov.hotelapi.model.entity.Booking;
 import com.allitov.hotelapi.model.entity.Room;
 import com.allitov.hotelapi.model.entity.User;
 import com.allitov.hotelapi.web.dto.request.BookingRequest;
-import com.allitov.hotelapi.web.dto.response.BookingListResponse;
-import com.allitov.hotelapi.web.dto.response.BookingResponse;
+import com.allitov.hotelapi.web.dto.response.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -80,6 +79,25 @@ public class BookingMapperTest {
         BookingListResponse response = new BookingListResponse(List.of(bookingResponse));
 
         BookingListResponse actualResponse = bookingMapper.entityListToListResponse(List.of(booking));
+
+        assertEquals(response, actualResponse);
+    }
+
+    @Test
+    @DisplayName("Test entityListToListWithCounterResponse()")
+    public void givenHotelList_whenEntityListToListWithCounterResponse_thenHotelListWithCounterResponse() {
+        BookingResponse bookingResponse = BookingResponse.builder()
+                .id(1)
+                .roomId(1)
+                .userId(1)
+                .from(LocalDate.of(2023, 12, 31))
+                .to(LocalDate.of(2024, 1, 31))
+                .build();
+        BookingListWithCounterResponse response =
+                new BookingListWithCounterResponse(1, List.of(bookingResponse));
+
+        BookingListWithCounterResponse actualResponse =
+                bookingMapper.entityListToListWithCounterResponse(List.of(booking));
 
         assertEquals(response, actualResponse);
     }

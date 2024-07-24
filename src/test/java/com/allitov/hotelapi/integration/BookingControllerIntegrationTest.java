@@ -85,6 +85,95 @@ public class BookingControllerIntegrationTest extends AbstractIntegrationTest {
     }
 
     @Test
+    @DisplayName("Test filterBy() status 200")
+    @WithUserDetails(
+            userDetailsServiceBeanName = USER_DETAILS_SERVICE_BEAN_NAME,
+            value = "admin",
+            setupBefore = TestExecutionEvent.TEST_METHOD
+    )
+    public void givenBookingFilterAndRoleAdmin_whenFilterBy_thenBookingWithCounterListResponse() throws Exception {
+        Integer pageSize = 1;
+        Integer pageNumber = 0;
+        String expectedResponse = TestUtils.readStringFromResource(
+                "response/booking/booking_list_with_counter_response.json");
+
+        String actualResponse = mockMvc.perform(get(
+                baseUri + "/filter?pageSize={size}&pageNumber={number}", pageSize, pageNumber))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andReturn()
+                .getResponse()
+                .getContentAsString();
+
+        assertJsonEquals(expectedResponse, actualResponse);
+    }
+
+    @Test
+    @DisplayName("Test filterBy() status 400")
+    @WithUserDetails(
+            userDetailsServiceBeanName = USER_DETAILS_SERVICE_BEAN_NAME,
+            value = "admin",
+            setupBefore = TestExecutionEvent.TEST_METHOD
+    )
+    public void givenNullBookingFilterPageNumberAndRoleAdmin_whenFilterBy_thenErrorResponse() throws Exception {
+        Integer pageSize = 10;
+        String expectedResponse = TestUtils.readStringFromResource(
+                "response/filter_invalid_pagination_response.json");
+
+        String actualResponse = mockMvc.perform(get(baseUri + "/filter?pageSize={pageSize}", pageSize))
+                .andExpect(status().isBadRequest())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andReturn()
+                .getResponse()
+                .getContentAsString();
+
+        assertJsonEquals(expectedResponse, actualResponse);
+    }
+
+    @Test
+    @DisplayName("Test filterBy() status 401")
+    @WithAnonymousUser
+    public void givenBookingFilterRoleAnonymous_whenFilterBy_thenErrorResponse() throws Exception {
+        Integer pageSize = 1;
+        Integer pageNumber = 0;
+        String expectedResponse = TestUtils.readStringFromResource(
+                "response/authentication_failure_response.json");
+
+        String actualResponse = mockMvc.perform(get(
+                        baseUri + "/filter?pageSize={size}&pageNumber={number}", pageSize, pageNumber))
+                .andExpect(status().isUnauthorized())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andReturn()
+                .getResponse()
+                .getContentAsString();
+
+        assertJsonEquals(expectedResponse, actualResponse);
+    }
+
+    @Test
+    @DisplayName("Test filterBy() status 403")
+    @WithUserDetails(
+            userDetailsServiceBeanName = USER_DETAILS_SERVICE_BEAN_NAME,
+            setupBefore = TestExecutionEvent.TEST_METHOD
+    )
+    public void givenBookingFilterRoleUser_whenFilterBy_thenErrorResponse() throws Exception {
+        Integer pageSize = 1;
+        Integer pageNumber = 0;
+        String expectedResponse = TestUtils.readStringFromResource(
+                "response/access_denied_response.json");
+
+        String actualResponse = mockMvc.perform(get(
+                        baseUri + "/filter?pageSize={size}&pageNumber={number}", pageSize, pageNumber))
+                .andExpect(status().isForbidden())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andReturn()
+                .getResponse()
+                .getContentAsString();
+
+        assertJsonEquals(expectedResponse, actualResponse);
+    }
+
+    @Test
     @DisplayName("Test create() role ADMIN status 201")
     @WithUserDetails(
             userDetailsServiceBeanName = USER_DETAILS_SERVICE_BEAN_NAME,

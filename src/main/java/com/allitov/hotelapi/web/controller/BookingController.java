@@ -1,10 +1,9 @@
 package com.allitov.hotelapi.web.controller;
 
 import com.allitov.hotelapi.model.service.BookingService;
+import com.allitov.hotelapi.web.dto.filter.BookingFilter;
 import com.allitov.hotelapi.web.dto.request.BookingRequest;
-import com.allitov.hotelapi.web.dto.response.BookingListResponse;
-import com.allitov.hotelapi.web.dto.response.BookingResponse;
-import com.allitov.hotelapi.web.dto.response.ErrorResponse;
+import com.allitov.hotelapi.web.dto.response.*;
 import com.allitov.hotelapi.web.mapping.BookingMapper;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -78,6 +77,62 @@ public class BookingController {
         log.info("Find all request");
 
         return ResponseEntity.ok(bookingMapper.entityListToListResponse(bookingService.findAll()));
+    }
+
+    @Operation(
+            summary = "Get bookings by filter",
+            description = "Get bookings by filter. Returns a list of bookings with counter. " +
+                    "Requires any of the authorities: ['ADMIN'].",
+            security = @SecurityRequirement(name = "Basic authorisation")
+    )
+    @ApiResponses({
+            @ApiResponse(
+                    description = "Returns status 200 and list of bookings with counter " +
+                            "if everything completed successfully.",
+                    responseCode = "200",
+                    content = {
+                            @Content(
+                                    schema = @Schema(implementation = BookingListWithCounterResponse.class),
+                                    mediaType = "application/json"
+                            )
+                    }
+            ),
+            @ApiResponse(
+                    description = "Returns status 400 and error message if request has invalid values.",
+                    responseCode = "400",
+                    content = {
+                            @Content(
+                                    schema = @Schema(implementation = ErrorResponse.class),
+                                    mediaType = "application/json"
+                            )
+                    }
+            ),
+            @ApiResponse(
+                    description = "Returns status 401 and error message if user is not authorized.",
+                    responseCode = "401",
+                    content = {
+                            @Content(
+                                    schema = @Schema(implementation = ErrorResponse.class),
+                                    mediaType = "application/json"
+                            )
+                    }
+            ),
+            @ApiResponse(
+                    description = "Returns status 403 and error message if user has no required authorities.",
+                    responseCode = "403",
+                    content = {
+                            @Content(
+                                    schema = @Schema(implementation = ErrorResponse.class),
+                                    mediaType = "application/json"
+                            )
+                    }
+            ),
+    })
+    @GetMapping("/filter")
+    public ResponseEntity<BookingListWithCounterResponse> filterBy(@Valid BookingFilter filter) {
+        log.info("Filter by request with filter: '{}'", filter);
+
+        return ResponseEntity.ok(bookingMapper.entityListToListWithCounterResponse(bookingService.filterBy(filter)));
     }
 
     @Operation(

@@ -23,11 +23,11 @@ public class Booking {
     @EqualsAndHashCode.Exclude
     private Integer id;
 
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "room_id", referencedColumnName = "id")
     private Room room;
 
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", referencedColumnName = "id")
     private User user;
 
@@ -36,4 +36,15 @@ public class Booking {
 
     @Column(name = "to_date")
     private LocalDate to;
+
+    @Override
+    public String toString() {
+        return "Booking(" +
+                "id=" + id +
+                ", roomId=" + room.getId() +
+                ", user=" + user +
+                ", from=" + from +
+                ", to=" + to +
+                ')';
+    }
 }

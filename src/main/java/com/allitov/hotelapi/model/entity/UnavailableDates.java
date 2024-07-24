@@ -2,6 +2,7 @@ package com.allitov.hotelapi.model.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
+import lombok.experimental.FieldNameConstants;
 
 import java.time.LocalDate;
 
@@ -13,6 +14,7 @@ import java.time.LocalDate;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
+@FieldNameConstants
 @Entity
 @Table(name = "unavailable_dates")
 public class UnavailableDates {
@@ -32,4 +34,14 @@ public class UnavailableDates {
 
     @Column(name = "to_date")
     private LocalDate to;
+
+    @Override
+    public String toString() {
+        return "UnavailableDates(" +
+                "id=" + id +
+                ", roomId=" + room.getId() +
+                ", from=" + from +
+                ", to=" + to +
+                ')';
+    }
 }

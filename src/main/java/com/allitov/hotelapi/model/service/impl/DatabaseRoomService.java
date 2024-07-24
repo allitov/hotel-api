@@ -3,11 +3,14 @@ package com.allitov.hotelapi.model.service.impl;
 import com.allitov.hotelapi.exception.ExceptionMessage;
 import com.allitov.hotelapi.model.entity.Room;
 import com.allitov.hotelapi.model.repository.RoomRepository;
+import com.allitov.hotelapi.model.repository.specification.RoomSpecification;
 import com.allitov.hotelapi.model.service.HotelService;
 import com.allitov.hotelapi.model.service.RoomService;
 import com.allitov.hotelapi.model.service.util.ServiceUtils;
+import com.allitov.hotelapi.web.dto.filter.RoomFilter;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import java.text.MessageFormat;
@@ -32,6 +35,23 @@ public class DatabaseRoomService implements RoomService {
     @Override
     public List<Room> findAll() {
         return roomRepository.findAll();
+    }
+
+    /**
+     * Returns a list of rooms that match the filtering parameters.
+     * @param filter a filter to search for room entities.
+     * @return a list of found room entities.
+     */
+    @Override
+    public List<Room> filterBy(RoomFilter filter) {
+        if (filter.getPageSize() == null || filter.getPageNumber() == null) {
+            return roomRepository.findAll(RoomSpecification.withFilter(filter));
+        }
+
+        return roomRepository.findAll(
+                RoomSpecification.withFilter(filter),
+                PageRequest.of(filter.getPageNumber(), filter.getPageSize()))
+                .getContent();
     }
 
     /**
