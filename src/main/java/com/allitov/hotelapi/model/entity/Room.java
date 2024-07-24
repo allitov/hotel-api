@@ -45,7 +45,19 @@ public class Room {
     @EqualsAndHashCode.Exclude
     private List<UnavailableDates> unavailableDates;
 
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "hotel_id", referencedColumnName = "id")
     private Hotel hotel;
+
+    @Override
+    public String toString() {
+        return "Room(" +
+                "id=" + id +
+                ", description='" + description + '\'' +
+                ", number=" + number +
+                ", price=" + price +
+                ", maxPeople=" + maxPeople +
+                ", hotelId=" + hotel.getId() +
+                ')';
+    }
 }

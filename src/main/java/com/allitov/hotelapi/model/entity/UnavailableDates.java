@@ -34,4 +34,14 @@ public class UnavailableDates {
 
     @Column(name = "to_date")
     private LocalDate to;
+
+    @Override
+    public String toString() {
+        return "UnavailableDates(" +
+                "id=" + id +
+                ", roomId=" + room.getId() +
+                ", from=" + from +
+                ", to=" + to +
+                ')';
+    }
 }
