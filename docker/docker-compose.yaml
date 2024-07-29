@@ -13,6 +13,16 @@ services:
       POSTGRES_PASSWORD: postgres
       POSTGRES_DB: hotel_api
 
+  mongodb:
+    container_name: mongodb_container
+    image: mongo:6.0.13
+    ports:
+      - "27017:27017"
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: root
+      MONGO_INITDB_DATABASE: app_statistics
+
   zookeeper:
     container_name: zookeeper_container
     image: confluentinc/cp-zookeeper:7.5.3
@@ -53,7 +63,13 @@ services:
       POSTGRES_DB: hotel_api
       KAFKA_HOST: kafka
       KAFKA_PORT: 9092
+      MONGODB_USERNAME: root
+      MONGODB_PASSWORD: root
+      MONGODB_HOST: mongodb
+      MONGODB_PORT: 27017
+      MONGODB_DBNAME: app_statistics
     depends_on:
       - postgres
+      - mongodb
       - zookeeper
       - kafka
