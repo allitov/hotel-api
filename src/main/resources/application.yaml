@@ -19,3 +19,11 @@ spring:
   liquibase:
     enabled: true
     change-log: classpath:/db/changelog/db.changelog-master.xml
+
+app:
+  kafka:
+    topic:
+      user-registration: "user-registration"
+      booking-creation: "booking-creation"
+    group-id:
+      statistics: "statistics-group-id"
