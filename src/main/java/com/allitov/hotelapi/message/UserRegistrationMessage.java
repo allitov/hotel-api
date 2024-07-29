@@ -13,5 +13,5 @@ import lombok.*;
 @EqualsAndHashCode(callSuper = true)
 public class UserRegistrationMessage extends KafkaMessage {
 
-    private Integer id;
+    private Integer userId;
 }
