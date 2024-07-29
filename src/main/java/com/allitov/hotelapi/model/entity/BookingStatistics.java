@@ -1,5 +1,6 @@
 package com.allitov.hotelapi.model.entity;
 
+import com.opencsv.bean.CsvIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -21,6 +22,7 @@ import java.time.LocalDate;
 public class BookingStatistics {
 
     @Id
+    @CsvIgnore
     private String id;
 
     private Integer userId;

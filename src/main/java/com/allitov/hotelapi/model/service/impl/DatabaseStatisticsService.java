@@ -5,13 +5,21 @@ import com.allitov.hotelapi.message.KafkaMessage;
 import com.allitov.hotelapi.model.entity.BookingStatistics;
 import com.allitov.hotelapi.model.repository.StatisticsRepository;
 import com.allitov.hotelapi.model.service.StatisticsService;
+import com.opencsv.CSVWriter;
+import com.opencsv.bean.StatefulBeanToCsv;
+import com.opencsv.bean.StatefulBeanToCsvBuilder;
+import com.opencsv.exceptions.CsvDataTypeMismatchException;
+import com.opencsv.exceptions.CsvRequiredFieldEmptyException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.UUID;
 
 /**
@@ -24,6 +32,9 @@ import java.util.UUID;
 public class DatabaseStatisticsService implements StatisticsService<KafkaMessage> {
 
     private final StatisticsRepository statisticsRepository;
+
+    @Value("${app.statistics.file-path}")
+    private String filePath;
 
     /**
      * Persists statistics.
@@ -48,7 +59,17 @@ public class DatabaseStatisticsService implements StatisticsService<KafkaMessage
      */
     @Override
     public File getData() {
-        return null;
+        try (FileWriter writer = new FileWriter(filePath)) {
+            StatefulBeanToCsv<BookingStatistics> csv = new StatefulBeanToCsvBuilder<BookingStatistics>(writer)
+                    .withQuotechar('\'')
+                    .withSeparator(CSVWriter.DEFAULT_SEPARATOR)
+                    .build();
+            csv.write(statisticsRepository.findAll());
+        } catch (IOException | CsvDataTypeMismatchException | CsvRequiredFieldEmptyException e) {
+            throw new RuntimeException(e);
+        }
+
+        return new File(filePath);
     }
 
     /**
