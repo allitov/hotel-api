@@ -24,8 +24,6 @@ spring:
     change-log: classpath:/db/changelog/db.changelog-master.xml
 
 app:
-  statistics:
-    file-path: "statistics.csv"
   kafka:
     topic:
       user-registration: "user-registration"
