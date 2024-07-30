@@ -1,5 +1,6 @@
 package com.allitov.hotelapi.model.service.impl;
 
+import com.allitov.hotelapi.message.UserRegistrationMessage;
 import com.allitov.hotelapi.model.entity.User;
 import com.allitov.hotelapi.model.repository.UserRepository;
 import jakarta.persistence.EntityExistsException;
@@ -12,6 +13,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
@@ -32,6 +34,9 @@ public class DatabaseUserServiceTest {
 
     @Mock
     private PasswordEncoder passwordEncoder;
+
+    @Mock
+    private KafkaTemplate<String, UserRegistrationMessage> kafkaTemplate;
 
     private User user;
 

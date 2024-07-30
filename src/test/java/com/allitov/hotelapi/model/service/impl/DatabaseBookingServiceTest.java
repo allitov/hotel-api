@@ -1,5 +1,6 @@
 package com.allitov.hotelapi.model.service.impl;
 
+import com.allitov.hotelapi.message.BookingCreationMessage;
 import com.allitov.hotelapi.model.entity.Booking;
 import com.allitov.hotelapi.model.entity.Room;
 import com.allitov.hotelapi.model.entity.UnavailableDates;
@@ -20,6 +21,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.kafka.core.KafkaTemplate;
 
 import java.math.BigDecimal;
 import java.time.DateTimeException;
@@ -47,6 +49,9 @@ public class DatabaseBookingServiceTest {
 
     @Mock
     private UnavailableDatesRepository unavailableDatesRepository;
+
+    @Mock
+    private KafkaTemplate<String, BookingCreationMessage> kafkaTemplate;
 
     private Booking booking;
 
