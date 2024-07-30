@@ -109,7 +109,8 @@ public class ExceptionControllerAdvice {
      */
     @ExceptionHandler(RuntimeException.class)
     public ResponseEntity<ErrorResponse> internalServerErrorHandler(Exception e) {
-        log.warn("Handle {} with message = '{}'", e.getClass().getName(), e.getMessage());
+        log.error("Handle {} with message = '{}'. Stack trace: {}",
+                e.getClass().getName(), e.getMessage(), e.getStackTrace());
 
         return ResponseEntity.internalServerError().build();
     }

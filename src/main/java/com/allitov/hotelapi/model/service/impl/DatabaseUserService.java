@@ -1,6 +1,7 @@
 package com.allitov.hotelapi.model.service.impl;
 
 import com.allitov.hotelapi.exception.ExceptionMessage;
+import com.allitov.hotelapi.message.UserRegistrationMessage;
 import com.allitov.hotelapi.model.entity.User;
 import com.allitov.hotelapi.model.repository.UserRepository;
 import com.allitov.hotelapi.model.service.UserService;
@@ -8,6 +9,8 @@ import com.allitov.hotelapi.model.service.util.ServiceUtils;
 import jakarta.persistence.EntityExistsException;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -22,6 +25,11 @@ public class DatabaseUserService implements UserService {
     private final UserRepository userRepository;
 
     private final PasswordEncoder passwordEncoder;
+
+    private final KafkaTemplate<String, UserRegistrationMessage> kafkaTemplate;
+
+    @Value("${app.kafka.topic.user-registration}")
+    private String topicName;
 
     /**
      * Returns a user entity found by the specified username.
@@ -73,8 +81,13 @@ public class DatabaseUserService implements UserService {
                     ExceptionMessage.USER_ALREADY_EXISTS, user.getUsername()));
         }
         user.setPassword(passwordEncoder.encode(user.getPassword()));
+        User createdUser = userRepository.save(user);
 
-        return userRepository.save(user);
+        UserRegistrationMessage message = new UserRegistrationMessage();
+        message.setUserId(createdUser.getId());
+        kafkaTemplate.send(topicName, message);
+
+        return createdUser;
     }
 
     /**

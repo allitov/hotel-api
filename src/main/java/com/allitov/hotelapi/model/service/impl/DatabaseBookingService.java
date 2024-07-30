@@ -1,6 +1,7 @@
 package com.allitov.hotelapi.model.service.impl;
 
 import com.allitov.hotelapi.exception.ExceptionMessage;
+import com.allitov.hotelapi.message.BookingCreationMessage;
 import com.allitov.hotelapi.model.entity.Booking;
 import com.allitov.hotelapi.model.entity.UnavailableDates;
 import com.allitov.hotelapi.model.repository.BookingRepository;
@@ -10,7 +11,9 @@ import com.allitov.hotelapi.model.service.RoomService;
 import com.allitov.hotelapi.model.service.UserService;
 import com.allitov.hotelapi.web.dto.filter.BookingFilter;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 
 import java.text.MessageFormat;
@@ -32,6 +35,11 @@ public class DatabaseBookingService implements BookingService {
     private final UserService userService;
 
     private final UnavailableDatesRepository unavailableDatesRepository;
+
+    private final KafkaTemplate<String, BookingCreationMessage> kafkaTemplate;
+
+    @Value("${app.kafka.topic.booking-creation}")
+    private String topicName;
 
     /**
      * Returns a list of found bookings.
@@ -78,8 +86,16 @@ public class DatabaseBookingService implements BookingService {
                     booking.getFrom(), booking.getTo()));
         }
         unavailableDatesRepository.save(createUnavailableDatesFromBooking(booking));
+        Booking createdBooking = bookingRepository.save(booking);
 
-        return bookingRepository.save(booking);
+        BookingCreationMessage message = BookingCreationMessage.builder()
+                .userId(booking.getUser().getId())
+                .from(booking.getFrom())
+                .to(booking.getTo())
+                .build();
+        kafkaTemplate.send(topicName, message);
+
+        return createdBooking;
     }
 
     private boolean areDatesInvalid(Booking booking) {
