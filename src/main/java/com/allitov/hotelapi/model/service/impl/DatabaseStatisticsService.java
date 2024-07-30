@@ -12,14 +12,11 @@ import com.opencsv.exceptions.CsvDataTypeMismatchException;
 import com.opencsv.exceptions.CsvRequiredFieldEmptyException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.stereotype.Service;
 
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
+import java.io.*;
 import java.util.UUID;
 
 /**
@@ -32,9 +29,6 @@ import java.util.UUID;
 public class DatabaseStatisticsService implements StatisticsService<KafkaMessage> {
 
     private final StatisticsRepository statisticsRepository;
-
-    @Value("${app.statistics.file-path}")
-    private String filePath;
 
     /**
      * Persists statistics.
@@ -54,22 +48,23 @@ public class DatabaseStatisticsService implements StatisticsService<KafkaMessage
     }
 
     /**
-     * Returns all persisted statistics as a file.
-     * @return a file with persisted data.
+     * Returns all persisted statistics as a byte array.
+     * @return a byte array with persisted data.
      */
     @Override
-    public File getData() {
-        try (FileWriter writer = new FileWriter(filePath)) {
+    public byte[] getData() {
+        ByteArrayOutputStream result = new ByteArrayOutputStream();
+        try (Writer writer = new BufferedWriter(new OutputStreamWriter(result))) {
             StatefulBeanToCsv<BookingStatistics> csv = new StatefulBeanToCsvBuilder<BookingStatistics>(writer)
                     .withQuotechar('\'')
                     .withSeparator(CSVWriter.DEFAULT_SEPARATOR)
                     .build();
             csv.write(statisticsRepository.findAll());
-        } catch (IOException | CsvDataTypeMismatchException | CsvRequiredFieldEmptyException e) {
+        } catch (IOException | CsvRequiredFieldEmptyException | CsvDataTypeMismatchException e) {
             throw new RuntimeException(e);
         }
 
-        return new File(filePath);
+        return result.toByteArray();
     }
 
     /**
